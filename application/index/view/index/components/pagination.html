@@ -1,0 +1,100 @@
+<style>
+    .pagination li a{
+        color: #666666;
+    }
+    .pagination li a:hover, .pagination li span:hover{
+        background-color: #fbbbbb;
+        transition: 0.3s background-color;
+        color: #666666;
+    }
+    .pagination .active span, .pagination .active a{
+        background-color: #FF4949 !important;
+        border-color: #FF4949 !important;
+        transition: 0.3s border-color;
+    }
+</style>
+<div class="page">
+    <nav aria-label="...">
+        <ul class="pagination"></ul>
+    </nav>
+</div>
+<script>
+    function genFF(orientation, disabled=false, num=false) {
+      const href = num ? window.location.protocol + '//' + window.location.host + window.location.pathname.replace(/\d+$/, num) : '#'
+      const FF = $('<li></li>').addClass(disabled ? 'disabled' : '')
+      if (disabled) {
+        $('<span></span>').html(orientation === 'left' ? '&laquo;' : '&raquo;').addClass(disabled ? 'disabled' : '').appendTo(FF)
+      } else {
+        $('<a></a>').attr({ href }).html(orientation === 'left' ? '&laquo;' : '&raquo;').addClass(disabled ? 'disabled' : '').appendTo(FF)
+      }
+      $(FF).appendTo('.pagination')
+    }
+
+    function genPageClick(num, active=false, disabled=false) {
+      const page = $('<li></li>').addClass(active ? 'active' : '')
+      let pathInfo = ''
+      if (window.location.pathname.split('/').length < 4) {
+        pathInfo = window.location.pathname + '/' + num
+      } else {
+        pathInfo = window.location.pathname.replace(/\d+$/, num)
+      }
+      const href = window.location.protocol + '//' + window.location.host + pathInfo
+      $('<a></a>').attr({ href }).html(num).appendTo(page)
+      $(page).appendTo('.pagination')
+    }
+
+    function genOmit() {
+      const omit = $('<li></li>')
+      $('<span></span>').html('...').appendTo(omit)
+      $(omit).appendTo('.pagination')
+    }
+
+    function genPagintion(pageTotal, currentPage) {
+      const pageOffset = 5
+      if (pageTotal <= 6) {
+        // 第一种情况，页码小于6页
+        genFF('left', true)
+        for(let i = 1; i <= pageTotal; i++) {
+          genPageClick(i, (i === parseInt(currentPage)))
+        }
+        genFF('right', true)
+      } else {
+        // 判断左方向箭头，如果当前页码大于偏移量，那么就可以点，否则不能点
+        genFF('left', currentPage <= Math.ceil(pageOffset/2), (currentPage - pageOffset) >= 1 ? (currentPage - pageOffset) : 1)
+
+        // 如果当前页码大于3，就需要第一页和省略号标志
+        if (currentPage > Math.ceil(pageOffset / 2)) {
+          genPageClick(1)
+          genOmit()
+        }
+        let pageLocation = 0
+        if (currentPage > Math.floor(pageOffset / 2) && currentPage < (pageTotal - Math.floor(pageOffset / 2))) {
+          // 当前页码大于2（从3 开始），并且小于最大页数-2，那么可以直接用于页码生成
+          pageLocation = currentPage
+        } else {
+          if (currentPage < Math.ceil(pageOffset / 2)) {
+            // 如果页码小于3，需要手动改成3
+            pageLocation = Math.ceil(pageOffset / 2)
+          } else {
+            // 页码大于最大页数-2，手动改成最大页数-2
+            pageLocation = pageTotal - Math.floor(pageOffset / 2)
+          }
+        }
+        for(let i = pageLocation - 2; i <= pageLocation + 2; i++) {
+          genPageClick(i, (i === parseInt(currentPage)), !(i === parseInt(currentPage)))
+        }
+        if (currentPage < pageTotal - Math.floor(pageOffset / 2)) {
+          genOmit()
+          genPageClick(pageTotal)
+        }
+
+        genFF('right', (currentPage + 5) >= pageTotal, (currentPage + pageOffset) >= pageTotal ? pageTotal :  currentPage + pageOffset)
+      }
+    }
+
+    $().ready(function() {
+      const pageTotal = {$pageCount};
+      const currentPage = {$currentPage};
+      genPagintion(pageTotal, currentPage)
+    })
+</script>

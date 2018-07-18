@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="__CSS__/bootstrap.css" />
+    <link rel="stylesheet" href="__CSS__/bootstrap-theme.css" />
+    <link rel="stylesheet" href="__CSS__/common.css" />
+    <script src="__JS__/jquery-3.3.1.js"></script>
+    <script src="__JS__/bootstrap.js"></script>
+    <script src="__JS__/axios.js"></script>
+</head>
+<body style="background-color: #F3F3F3">
+{//按需自动加载自定义标签}
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid nav-container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/index">云课堂</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <include file="index/index/navbar_login" title="用户" />
+            <ul class="nav navbar-nav navbar-color navbar-right nav-vpro">
+                <li class="active"><a href="/personal">我的 <span class="sr-only">(current)</span></a></li>
+                <li><a href="/cart">购物车</a></li>
+                <li><a href="/message">消息</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Action</a></li>
+                        <li><a href="#">Another action</a></li>
+                        <li><a href="#">Something else here</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">Separated link</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">One more separated link</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+<style>
+    .nav-container{
+        max-width: 1200px;
+    }
+    .navbar-default {
+        background-color: #ff4949;
+        border-color: #c0392b;
+        background-image: none !important;
+    }
+    .navbar-default .navbar-brand {
+        color: #ecf0f1;
+    }
+    .navbar-default .navbar-brand:hover,
+    .navbar-default .navbar-brand:focus {
+        color: #ffbbbc;
+    }
+    .navbar-default .navbar-text {
+        color: #ecf0f1;
+    }
+    .navbar-default .navbar-nav > li > a {
+        color: #ecf0f1;
+    }
+    .navbar-default .navbar-nav > li > a:hover,
+    .navbar-default .navbar-nav > li > a:focus {
+        color: #ffbbbc !important;
+    }
+    .navbar-default .navbar-nav > .active > a,
+    .navbar-default .navbar-nav > .active > a:hover,
+    .navbar-default .navbar-nav > .active > a:focus {
+        color: #ffbbbc !important;
+        background-color: #c0392b !important;
+    }
+    .navbar-default .navbar-nav > .open > a,
+    .navbar-default .navbar-nav > .open > a:hover,
+    .navbar-default .navbar-nav > .open > a:focus {
+        color: #ffbbbc !important;
+        background-color: #c0392b !important;
+    }
+    .navbar-default .navbar-toggle {
+        border-color: #c0392b !important;
+    }
+    .navbar-default .navbar-toggle:hover,
+    .navbar-default .navbar-toggle:focus {
+        background-color: #c0392b !important;
+    }
+    .navbar-default .navbar-toggle .icon-bar {
+        background-color: #ecf0f1 !important;
+    }
+    .navbar-default .navbar-collapse,
+    .navbar-default .navbar-form {
+        border-color: #ecf0f1 !important;
+    }
+    .navbar-default .navbar-link {
+        color: #ecf0f1 !important;
+    }
+    .navbar-default .navbar-link:hover {
+        color: #ffbbbc !important;
+    }
+    .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .active > a {
+        background-image: none !important;
+    }
+    @media (max-width: 767px) {
+        .navbar-default .navbar-nav .open .dropdown-menu > li > a {
+            color: #ecf0f1 !important;
+        }
+        .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
+        .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+            color: #ffbbbc !important;
+        }
+        .navbar-default .navbar-nav .open .dropdown-menu > .active > a,
+        .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
+        .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+            color: #ffbbbc !important;
+            background-color: #c0392b !important;
+        }
+    }
+</style>
+<script>
+  function parseTime(time, cFormat) {
+    const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
+    let date
+    if (typeof time === 'object') {
+      date = time
+    } else {
+      if (('' + time).length === 10) time = parseInt(time) * 1000
+      date = new Date(time)
+    }
+    const formatObj = {
+      y: date.getFullYear(),
+      m: date.getMonth() + 1,
+      d: date.getDate(),
+      h: date.getHours(),
+      i: date.getMinutes(),
+      s: date.getSeconds(),
+      a: date.getDay()
+    }
+    const time_str = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result, key) => {
+      let value = formatObj[key]
+      if (key === 'a') return ['一', '二', '三', '四', '五', '六', '日'][value - 1]
+      if (result.length > 0 && value < 10) {
+        value = '0' + value
+      }
+      return value || 0
+    })
+    return time_str
+  }
+  $(document).ready(function() {
+    $('.nav-vpro li').removeClass('active')
+    $('.nav-vpro li').each(function(key, value) {
+      const match = window.location.pathname.match(/[A-Za-z]+$/)
+      if (match !== null && match.length > 0) {
+        const aim = /[a-z]+$/.exec($(value).find('a').attr('href'))
+        if (aim !== null && aim.length > 0 && aim[0] !== undefined) {
+          if (aim[0] === match[0]) {
+            $(this).addClass('active')
+            return true
+          }
+        }
+      }
+    })
+  })
+</script>
+<div class="container" style="max-width: 1200px">
+<!--以下是内容区-->

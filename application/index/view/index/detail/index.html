@@ -1,0 +1,290 @@
+<extend name="index/index/base" />
+<block name="customer">
+    <include file="index/components/breadCrumb" />
+    <link rel="stylesheet" href="__CSS__/prettify.css">
+    <style>
+        .detail-main{
+            background:#fff;
+            box-shadow:2px 2px 5px #ccc;
+            border-radius: 4px;
+            padding:20px;
+            margin:10px 0;
+        }
+        /*以下是目录的css控制*/
+
+        .chapterList{
+            border-top:1px solid #ddd;
+            text-align:left;
+            position:relative;
+            padding-bottom:1em;
+        }
+        .chapterList .chapterHead{
+            height: 35px;
+            color: #999;
+            font-family: '微软雅黑';
+            font-size: 14px;
+            font-weight: bolder;
+            padding: 0 20px;
+            line-height: 35px;
+            cursor: default;
+            background: #fafafa;
+        }
+        .chapterList .chapterTitle{
+            width: 62px;
+            height:35px;
+            text-align:left;
+        }
+        .chapterList .chapterName{
+            width:470px;
+            padding-left:6px;
+        }
+        .chapterList .section{
+            height:40px;
+            line-height:40px;
+            padding:0 20px;
+            cursor:pointer;
+            transition: background-color 0.15s ease-out;
+            font-size: 16px;
+        }
+        .chapterList .section:hover{
+            background-color:#ffd2d2;
+        }
+        .section .lesson{
+            width:62px;
+            color:#999;
+            text-align:left;
+            font-size:14px;
+        }
+        .section .lessonName{
+            width:450px;
+            padding-left:6px;
+            color:#333;
+            height:36px;
+        }
+        /*以上是目录的css控制*/
+
+        .detail-intro{
+            padding:15px;
+        }
+        .detail-show{
+            background:#fff;
+            box-shadow:2px 2px 1px #ccc;
+            margin:10px 0;
+        }
+        .detail-card{
+            margin: 10px 0;
+            box-shadow:2px 2px 5px #ccc;
+        }
+        .main-img{
+            box-shadow: 2px 2px 5px #ccc;
+            height:250px;
+            width:450px;
+            display: block;
+        }
+        .main-detail{
+            position:relative;
+        }
+        .main-title{
+            font-size:28px;
+            color:#333;
+            margin:0 0 5px 0;
+        }
+        .main-price{
+            color:#FF4949;
+            font-size:38px;
+            margin:15px 5px 10px 5px;
+        }
+        .main-adv{
+            padding:4px 10px;
+            margin:15px 2px 5px 2px;
+            background:#FF4949;
+            color:#fff;
+            display:inline-block;
+            line-height: 22px;
+            border-radius:15px;
+            font-size: 14px;
+        }
+        .main-btn{
+            position:absolute;
+            left:5px;
+            bottom: -57px;
+        }
+        .main-btn button{
+            margin-right:10px;
+        }
+        .main-btn a{
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            color: #3399ff;
+        }
+        .main-btn a:hover{
+            cursor: pointer;
+            color: #3366ff;
+            text-decoration: none;
+        }
+        .main-btn .collect{
+            padding: 0 0 0 10px;
+            color: #ccc;
+        }
+        .main-btn .collect:hover{
+            color: #bbb;
+            text-decoration: none;
+        }
+        .main-btn .collected i{
+            color: #FF4949;
+            padding: 0 0 0 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .main-btn .collect span{
+            color: #3399ff;
+        }
+        .main-info{
+            margin:10px 0;
+            color: #666;
+        }
+        .main-info div{
+            /*display: inline-block;*/
+            height: 35px;
+            line-height: 35px;
+        }
+        .main-info .star{
+
+        }
+        .detail-intro{
+            padding:15px;
+        }
+        .blank-card{
+            text-align: center;
+            padding: 80px 0;
+        }
+        .blank-card span{
+            display: block;
+            color: #CCCCCC;
+        }
+        .activity-price{
+            color: #CCCCCC;
+            font-size: 20px;
+            text-decoration: line-through;
+        }
+    </style>
+    <div class="detail-main">
+        <div class="row">
+            <div class="col-md-5">
+                <img src="{$courseDetail['course_cover_address']}" alt="" class="main-img">
+            </div>
+            <div class="col-md-7">
+                <div class="main-detail">
+                    <span class="main-title">{$courseDetail['course_title']}</span>
+                    <div class="main-info">
+                        <i class="glyphicon glyphicon-eye-open" style="padding: 0 5px 0 0"></i>
+                        <span>{$courseDetail['course_clickNum']} 人看过</span>
+                        <span class="starLine"><include file="index/components/star" /></span>
+                        <span>评分： {$courseDetail['course_score']}</span>
+                    </div>
+                    <div>
+                        <span class="main-price">{$courseDetail['course_price'] === '0.00' ? '免费' : $courseDetail['course_price']}</span>
+                        <span class="activity-price">{$courseDetail['course_discount_price'] === '-1.00' ? '' : $courseDetail['course_discount_price']}</span>
+                    </div>
+                    <!--<div class="main-adv">现在注册即送优惠券</div>-->
+                    <div class="clearfix"></div>
+                    <div  class="main-btn">
+                        <button type="button" class="btn btn-ff btn-lg">立即参加</button>
+                        <a type="button" class="cart" id="addToCart">加入购物车</a>
+                        <a type="button" class="collect"><i class="glyphicon glyphicon-heart"></i><span> 收藏</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--twitter-bootstrap-wizard-->
+    <div id="rootwizard" class="tabbable tabs-left detail-show">
+        <ul>
+            <li><a href="#tab1" data-toggle="tab">总览</a></li>
+            <li><a href="#tab2" data-toggle="tab">课程目录</a></li>
+            <li><a href="#tab3" data-toggle="tab">评论</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade in" id="tab1">
+                <div class="detail-intro">
+
+                    适用人群
+
+                    1.零基础学员
+                    2.前端爱好者
+                    课程概述
+                    课程大纲：
+                    1.HTML常用标签/语义化便签/多媒体标签等企业常用HTML相关知识；
+                    2.CSS常见选择器/2D/3D/动画/响应式布局等CSS相关知识；
+                    3.以上两部分内容完成之后会带着大家高仿一个企业网站以及做一个响应式网站(同时适配电脑/手机/平板电脑)；
+                    4.JS基础语法， 涵盖所有JS基础语法，内置对象，DOM，BOM操作以及各种常见JS特效实现；
+                    5.JS面向对象涵盖面向对象三大特性在JS中的应用和常见设计模式排序算法讲解；
+                    6.jQuery、jQueryUI、jQuerymobile、jQuery实现原理、jQuery实战
+                    7.Aajx、web存储（cookie/session/storage/三方框架）等、Ajax实战
+                    8.各种流行框架（bootstrap、AngularJS、VueJS、ReactJS、组件化、模块化）等
+                    9.Web工作流框架Gulp、Bower、Webpack等
+                    10.Nodejs、React Native跨平台开发(同时实现Android/iOS)
+                    通过1:1:1完成大型企业项目途牛App的开发， 带大家打通前后端。
+                    **********************************************************************
+                    更多内容可以加入“江哥带你玩转H5”群，请戳→289964053（备注：网易云课堂）
+                    个人博客地址: http://www.jianshu.com/p/641506cd8153
+                    **********************************************************************
+                </div>
+            </div>
+            <div class="tab-pane fade in" id="tab2">
+                <div>
+                    <h3>目录</h3>
+                    <div class="chapterList">
+                        <php>foreach($lessonList as $key => $value) {</php>
+                            <div>
+                                <if condition="$value['lesson_title']">
+                                <div class="chapterHead" style="display: {$value['lesson_title'] ? 'block' : 'none'}">
+                                    <span class="chapterTitle">章节{$value['lesson_lid'] + 1}:</span>
+                                    <span class="chapterName">{$value['lesson_title']}</span>
+                                </div>
+                                </if>
+                                <php>foreach($value['lesson'] as $v) {</php>
+                                    <div class="section">
+                                        <span class="lesson">课时{$v['lesson_lid'] + 1}</span>
+                                        <span class="lessonName" >{$v['lesson_title']}</span>
+                                    </div>
+                                <php>}</php>
+                            </div>
+                        <php>}</php>
+                    </div>
+                    <div class="blank-card" style="display: <?php echo count($lessonList) === 0 ? 'block' : 'none' ?>">
+                        <span>还没有发布任何课时~</span>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="tab3">
+                <div class="blank-card">
+                    <span>讨论区即将开放</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="__JS__/jquery.bootstrap.wizard.js"></script>
+    <script src="__JS__/prettify.js"></script>
+    <script>
+        $(document).ready(function() {
+          const url = window.location.protocol + '//' + window.location.host
+          $('.main-info .star').raty('score', '{$courseDetail["course_score"]}')
+          $('.main-info .star').raty('readOnly', true)
+          $('#rootwizard').bootstrapWizard({'tabClass': 'nav nav-tabs'});
+          $('#addToCart').click(function() {
+            $.get(
+              url + '/index/detail/addToCart',
+              { course_id: {$courseDetail['course_id']} },
+//              { course_id: 'abc123' },
+              function(data) {
+                console.log(data)
+              })
+          })
+        })
+    </script>
+</block>

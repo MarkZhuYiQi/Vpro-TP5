@@ -1,0 +1,332 @@
+<extend name="index/index/base" />
+<block name="customer">
+    <style>
+        .cart-container{
+            font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+        }
+        .box-card{
+            background-color: #FFFFFF;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .cart-title {
+            line-height: 36px;
+        }
+        .cart-title{
+            margin:10px 0 10px 0;
+            font-size:16px;
+        }
+        .order-title{
+            padding: 5px 0 15px 0;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+        .bottom{
+            border-top:1px solid #eee;
+        }
+        .el-checkbox{
+            line-height:36px;
+        }
+        .thumbnail_cart{
+            margin: 0 0 0 10px;
+            height:68px;
+            width:120px;
+            display:inline-block;
+            cursor: pointer;
+        }
+        .cart-divide{
+            border:1px solid #efefef;
+            margin:10px 0;
+        }
+        .cart-bottom{
+            line-height:60px;
+            height:60px;
+            width:100%;
+            max-width:1200px;
+            background-color:#ffffff;
+            margin: 0 0 10px 0;
+        }
+        .cart-bottom .put_order{
+            padding: 0;
+            border-radius: 0;
+            cursor: pointer;
+            background-color: #ff4949;
+            border: 1px solid #ff4949;
+            color: #fff;
+            font-size: 20px;
+            height: 60px;
+            text-align: center;
+            width: 100%;
+        }
+        .cart-bottom .put_order:hover{
+            background-color: #FF2929;
+            border: 1px solid #FF2929;
+            transition: background-color 0.2s, border 0.2s;
+        }
+        .disable_button{
+            padding:0;
+            border-radius: 0;
+            cursor:pointer;
+            font-size: 20px;
+            height:60px;
+            text-align:center;
+            width:100%;
+            color:#bfcbd9;
+            background-color: #eef1f6;
+            border-color: #d1dbe5;
+        }
+        .cart-bottom .col-md-2{
+            padding: 0
+        }
+        .cart-bottom .total-price{
+            float:right;
+            padding:0 55px 0 0;
+        }
+        .cart-bottom .total{
+            color:#666;
+            font-size:16px;
+        }
+        .cart-bottom .price-desc{
+            font-size:16px;
+            color:#666;
+        }
+        .cart-bottom .price-num{
+            font-size:24px;
+            color:#FF4949;
+        }
+        .cart-bottom .checkAll{
+            padding:0 0 0 20px;
+        }
+        .cart-checkbox{
+            line-height:1.5;
+            margin: 0 10px 0 10px !important;
+        }
+        .text-button{
+            color: #999;
+        }
+        .text-button:hover{
+            text-decoration: none;
+            cursor: pointer;
+            color: #FF6969;
+            transition: color 0.2s;
+        }
+        .btn-disabled{
+            opacity: 0.65;
+            cursor: not-allowed !important;
+        }
+    </style>
+
+
+    <div class="cart-container">
+        <div class="cart-title">
+            <span>我的购物车</span>
+            <span>共{$cartNum}门课程</span>
+        </div>
+        <div class=" box-card shadow cart-title">
+            <div class="row">
+                <div class="col-md-2">
+                    <span><input type="checkbox" class="cart-checkbox selectAll" name="checkAll"> 全选</span>
+                </div>
+                <div class="col-md-5">
+                    课程名称
+                </div>
+                <div class="col-md-2">
+                    学期或课程有效期
+                </div>
+                <div class="col-md-2">
+                    单价（元）
+                </div>
+                <div class="col-md-1">
+                    <button style="float: right;" name="putorder" type="button" class="btn btn-ff btn-md">确认下单</button>
+                </div>
+            </div>
+        </div>
+        <div class="box-card shadow" style="display: {$cartNum ? 'block' : 'none'}">
+            <div class="order-title">
+                <span><input type="checkbox" class="cart-checkbox" name="checkSelfSupport"> 网站自营</span>
+            </div>
+            <foreach $cart as $item>
+                <div class="text item">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <input type="checkbox" class="cart-checkbox" name="selfItemCheck" courseid="{$item['course_id']}" courseprice="{$item['course_price']}" >
+                        </div>
+                        <div class="col-md-2">
+                            <div><img class="thumbnail_cart" src="{$item['course_cover_address']}" alt="" onclick="window.open(window.location.protocol + '//' + window.location.host + '/detail/' + {$item['course_id']})"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <span style="cursor: pointer" onclick="window.open(window.location.protocol + '//' + window.location.host + '/detail/' + {$item['course_id']})">{$item['course_title']}</span>
+                        </div>
+                        <div class="col-md-2">
+                            永久有效
+                        </div>
+                        <div class="col-md-2 coursePrice" name="coursePrice">
+                            {$item['course_price']}
+                        </div>
+                        <div class="col-md-1">
+                            <a type="text" class="text-button">delete</a>
+                        </div>
+                    </div>
+                    <hr class="cart-divide">
+                </div>
+            </foreach>
+        </div>
+        <div style="background-color: #FFFFFF; color: #cccccc; text-align: center; margin: 10px 0" v-if="!cartInfo.cartInfo.length">
+            <span style="padding: 80px; display: {$cartNum ? 'none' : 'block'}" class="shadow">空空如也~</span>
+        </div>
+        <div class="cart-bottom shadow">
+            <div>
+                <div class="col-md-3">
+                    <!--<div class="checkAll"><el-checkbox v-model="check.checkAll" @change="checkAll">全选</el-checkbox></div>-->
+                    <span><input type="checkbox" class="cart-checkbox selectAll" name="checkAll"> 全选</span>
+                </div>
+                <div class="col-md-7">
+                    <div class="total-price">
+                        <span class="price-desc">合计：</span><span class="price-num">0.00</span>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button name="putorder" class="put_order">确认下单</button>
+                </div>
+            </div>
+        </div>
+        <div class="alert alert-danger fade in" role="alert" id="cartAlert" style="display: none">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" id="close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            Oops...商品验证出错，请尝试刷新重试！
+        </div>
+    </div>
+    <script>
+      /**
+       * 计算总价格
+       */
+      function sumPrice() {
+        let price = 0
+        for(let d of $('.cart-checkbox[name="selfItemCheck"]')) {
+          if (!!$(d).prop('checked')) {
+            price += parseFloat($(d).parent().parent().find('.coursePrice').html().replace(/\s*/, ''))
+          }
+        }
+        $('.price-num').html(price.toFixed(2))
+        return price
+      }
+
+      function checkAll(value) {
+        $('.cart-checkbox').each(function() {
+          $(this).prop('checked', value)
+        })
+      }
+      function selfCheckAll(value) {
+        $('input[name="selfItemCheck"]').each(function() {
+          $(this).prop('checked', value)
+        })
+      }
+      /**
+       * 全选框的控制
+       */
+      function checkAllBox(judgeBox, checkAllBox) {
+        let checked = false
+        for(let d of $('input[name="' + judgeBox + '"]')) {
+          // 如果发现未选中，直接将全选勾取消，然后跳出循环
+          if (!$(d).prop('checked')) {
+            $('input[name="' + checkAllBox + '"]').each(function() {
+              $(this).prop('checked', false)
+            })
+            return
+          }
+          checked = true
+        }
+        if (checked) {
+          $('input[name="'+ checkAllBox +'"]').each(function() {
+            $(this).prop('checked', true)
+          })
+        }
+      }
+      /**
+       * 取出选中购物车课程的课程id
+       * @returns {Array}
+       */
+      function checkItems() {
+        let courses =  []
+        for(let d of $('input[name="selfItemCheck"]'))
+        {
+          if ($(d).prop('checked'))
+          {
+            courses.push({ courseId: $(d).attr('courseid'), coursePrice: $(d).attr('courseprice') })
+          }
+        }
+        return courses;
+      }
+
+      /**
+       * 下单按钮是否可用
+       */
+      function checkPutOrderBtn() {
+        if (checkItems().length === 0) {
+          $('button[name="putorder"]').each(function() {
+            $(this).attr('disabled', 'disabled')
+            $(this).addClass('btn-disabled')
+          })
+        } else {
+          $('button[name="putorder"]').each(function() {
+            $(this).attr('disabled', false)
+            $(this).removeClass('btn-disabled')
+          })
+        }
+      }
+      function putOrder(price) {
+        let courses = checkItems()
+        let courseIds = checkItems().map(function(item, i) {
+          return item['courseId']
+        })
+        const obj = $
+        $('button[name="putorder"]').css('opacity', '0.65').html('Loading...').css('cursor', 'not-allowed')
+        $.ajax({
+          type: 'POST',
+          url: '/cart/checkcartitem',
+          data: JSON.stringify(courses),
+          dataType: 'json',
+          contentType: 'application/json',
+          success: function(data) {
+            if (data['errs'].length !== 0) {
+              obj('button[name="putorder"]').css('opacity', 1).html('提交订单').css('cursor', 'pointer')
+              $('#cartAlert').css('display', 'block')
+              return false
+            }
+            if (data['courses'].sort().toString() === courseIds.sort().toString() && data['orderNo']) {
+              window.location.href = window.location.protocol + '//' + window.location.host + '/putorder/' + data['orderNo']
+              return false
+            }
+            $('#cartAlert').css('display', 'block')
+            return false
+          }
+        })
+      }
+      $(document).ready(function() {
+        const cartNum = {$cartNum};
+        checkPutOrderBtn()
+        $(".cart-checkbox").click(function() {
+          if ($(this).prop('name') === 'checkAll') {
+            checkAll(!!$(this).prop('checked'))
+          }
+          if ($(this).prop('name') === 'checkSelfSupport') {
+            selfCheckAll(!!$(this).prop('checked'))
+          }
+          checkAllBox('selfItemCheck', 'checkAll')
+          checkAllBox('selfItemCheck', 'checkSelfSupport')
+          sumPrice()
+          checkPutOrderBtn()
+        })
+        // 下单按钮
+        $('button[name="putorder"]').click(function() {
+          if (!$(this).attr('disabled')) {
+            putOrder(sumPrice())
+          }
+        })
+        // 警告框相关
+        $('#cartAlert').on('close.bs.alert', function() {
+        })
+      })
+    </script>
+</block>

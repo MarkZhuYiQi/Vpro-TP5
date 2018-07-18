@@ -1,0 +1,110 @@
+<extend name="index/index/base" />
+<block name="customer">
+    <style>
+        .category-card{
+            width: 100%;
+            background-color: #FFFFFF;
+            box-shadow: 2px 2px 3px #cccccc;
+            margin: 0 0 10px 0;
+        }
+        .category-card .info {
+            padding: 8px;
+        }
+        .category-card span{
+            padding: 3px 6px;
+            display: inline-block;
+        }
+        .category-card .title{
+            display: block;
+            font-size: 15px;
+            line-height: 18px;
+            height: 36px;
+            width: 100%;
+            color: #333;
+        }
+        .category-card .author{
+            color: #999;
+            font-size: 13px;
+        }
+        .category-card .price{
+            font-size: 16px;
+            color: #ff4949;
+            display: inline-block;
+            font-weight: bold;
+        }
+        .category-card .origin-price{
+            color: #cccccc;
+            font-size: 13px;
+            text-decoration: line-through;
+            display: inline-block;
+        }
+        .category .img{
+            overflow: hidden;
+        }
+        .category .img img{
+            height: 140px;
+            width: 100%;
+            display: block;
+            background: #eee;
+            border: none;
+            cursor:pointer;
+            transition:transform 0.7s;
+        }
+        .category .img img:hover{
+            transform: scale(1.2);
+            /*zoom:1.2;*/
+        }
+        .price-color{
+            color: #ff4949;
+        }
+        .detail-color{
+            color: #999999;
+        }
+        .category{
+            padding: 0 10px;
+        }
+        .category .col-md-3{
+            padding: 0 5px;
+        }
+
+    </style>
+    <div></div>
+    <include file="index/components/breadCrumb" />
+    <div class="row category">
+        <foreach name="coursesInfo" item="item">
+            <div class="col-md-3">
+                <div class="category-card">
+                    <div class="img">
+                        <img class="lazyload" data-src="{$item['course_cover_address']}?imageView2/1/w/277/h/140/format/jpg/q/100" alt="" onclick="window.open(window.location.protocol + '//' + window.location.host + '/detail/' + {$item['course_id']})">
+                    </div>
+                    <div class="info">
+                        <div class="title">
+                            <span>{$item['course_title']}</span>
+                        </div>
+                        <div class="author">
+                            <span>{$item['course_author']}</span>
+                        </div>
+                        <div class="detail detail-color">
+                            <span>4.8</span>
+                            <span>({$item['course_clickNum']})人看过</span>
+                        </div>
+                        <div class="price">
+                            {$item['course_price']}
+                        </div>
+                        <div class="origin-price">
+                            {$item['course_discount_price']}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </foreach>
+    </div>
+    <script src="__JS__/lazyload.js"></script>
+    <script>
+        $(document).ready(function() {
+          let lazyLoad = lazyload()
+          lazyLoad.loadImages()
+        })
+    </script>
+    <include file="index/components/pagination" />
+</block>

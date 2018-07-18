@@ -1,0 +1,77 @@
+<extend name="index/index/base" />
+<block name="customer">
+    <script>
+      var isRight='';
+
+      function checkCode(){
+        $.ajax({
+          url:"/Home/User/verifyCodeCheck",
+          type:"POST",
+          data:{
+            code:$('#verify').val()
+          },
+          dataType:"text",
+          success:function(data,textStatus){
+            if(data)
+            {
+              isRight=true;
+              $('#verifyDiv').addClass('has-success');
+            }else{
+              isRight=false;
+              $('#verifyDiv').addClass('has-warning');
+            }
+          }
+        });
+      }
+
+      $(document).ready(function(){
+        $('#verify').blur(function(){
+          $('#verifyDiv').removeClass('has-success has-warning');
+          checkCode();
+        });
+        $('#submit').click(function(){
+          if(isRight=='')checkCode();
+          if(!isRight)
+          {
+            alert('请重新填写验证码！');
+            return false;
+          }
+        });
+        $('#code').css('cursor','pointer');
+        $('#code').click(function(){
+          this.src="/Home/user/verifyCode?t="+Math.random();
+        });
+      });
+    </script>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7">
+1
+            </div>
+            <div class="col-md-5">
+                <form role="form" method="post" id="form">
+                    <div class="form-group">
+                        <label>用户名：</label>
+                        <input type="text" class="form-control" id="userName" name="userName" placeholder="请输入用户名">
+                    </div>
+                    <div class="form-group">
+                        <label>密码：</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="输入密码">
+                    </div>
+                    <div class="form-inline" id="verifyDiv">
+                        <label>验证码：</label>
+                        <input type="text" class="form-control" id="verify" name="verify" placeholder="请输入验证码">
+                        <img src=" /index/user/verifycode" alt="" class="img-thumbnail" id="code"/>
+                    </div>
+                    <div class="form-group checkbox">
+                        <label>
+                            <input type="checkbox" name="saveUser"> 保存一周
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-default" id="submit">登录</button>
+                    <span style="color:red">{$errorInfo}</span>
+                </form>
+            </div>
+        </div>
+    </div>
+</block>

@@ -1,0 +1,178 @@
+<extend name="index/index/base" />
+
+<block name="customer">
+    <div>
+        <include file="index/index/swiper" />
+    </div>
+
+    <style>
+        /*导航条的css*/
+        .guide span{
+            display: inline-block;
+        }
+        .guideArea{
+            position: relative;
+            margin:20px 0 8px 0;
+        }
+        .guideTitle{
+            font-size:25px;
+        }
+        .sub_title{
+            display:inline-block;
+            padding:0px 5px 0px;
+            color:#666;
+        }
+        .linkTitle{
+            cursor:pointer;
+        }
+        .linkTitle:hover{
+            color:#FF4949;
+        }
+        .more{
+            position:absolute;
+            right:0;
+            bottom:8px;
+            font-size: 14px;
+            color:#aaa;
+        }
+
+        /*以下是card系列css*/
+        .card-container .col-md-4,
+        .card-container .col-md-8{
+            padding: 0 5px;
+        }
+        .vertImg{
+            /*margin:10px 0;*/
+            width:100%;
+        }
+        .card{
+            border: 1px solid #ebeef5;
+            transition: .3s;
+            color: #303133;
+            box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+            border-radius: 3px;
+            background-color: #FFFFFF;
+            max-height:350px;
+            /*width:220px;*/
+            width:100%;
+            margin-bottom: 3%;
+        }
+        .card span {
+            display: inline-block;
+        }
+        .projectTitle a{
+            text-decoration: none;
+            color: #333;
+            overflow: hidden;
+            transition:color 0.2s linear;
+            cursor:pointer;
+        }
+        .projectTitle a:hover{
+            color:#FF4949;
+        }
+        .price{
+            padding:10px 0 5px 0;
+        }
+        .price .original-price{
+            color:#bbb;
+            font-size:15px;
+            text-decoration: line-through;
+        }
+        .price .discount-price{
+            display:inline-block;
+            color:#FF501A;
+            font-size:24px;
+        }
+        .des{
+            padding: 6px;
+            /*height:80px;*/
+        }
+        .des .projectTitle{
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size:14px;
+            line-height:1.4;
+            width:95%;
+        }
+        .des .time {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .des .bottom {
+            padding-top: 10px;
+            line-height: 13px;
+
+        }
+        .image{
+            width:100%;
+            height:100%;
+            overflow: hidden;
+        }
+        .image img {
+            width: 100%;
+            height:100%;
+            display: block;
+            cursor:pointer;
+            transition:transform 0.7s;
+        }
+        .image img:hover{
+            transform: scale(1.2);
+            /*zoom:1.2;*/
+        }
+
+        .clearfix:before,
+        .clearfix:after {
+            display: table;
+            content: "";
+        }
+
+        .clearfix:after {
+            clear: both
+        }
+    </style>
+
+    <foreach name="indexInfo" item="item">
+        <div class="guide">
+            <div class="guideArea">
+                <span class="guideTitle linkTitle" href="javascript:;" onclick="window.open(window.location.protocol + '//' + window.location.host + '{item->nav_url}')">{$item->nav_text}</span>
+                <span>
+                    <php>foreach($item->children as $guide) {</php>
+                        <span class="sub_title linkTitle" href="javascript:;" onclick="window.open(window.location.protocol + '//' + window.location.host + '{$guide->nav_url}')">{$guide->nav_text}</span>
+                    <php>}</php>
+                </span>
+                <span class="more linkTitle" href="javascript:;" onclick="window.open(window.location.protocol + '//' + window.location.host + '{$guide->nav_url}')">更多 <i class="el-icon-arrow-right" style="font-size:10px;line-height:14px;"></i></span>
+            </div>
+        </div>
+        <div class="card-container">
+            <div class="row">
+                <div class="col-md-2 hidden-sm hidden-xs"><img src="http://ozg76yopg.bkt.clouddn.com/all.png" alt="" class="vertImg" /></div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <php>foreach($item->indexCourses as $course) {</php>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="image">
+                                    <img src="{$course->course_cover_address}?imageView2/1/w/251/h/140/format/jpg/interlace/1/q/100" onclick="window.open(window.location.protocol + '//' + window.location.host + '/detail/' + {$course->course_id})" />
+                                </div>
+                                <div class="des">
+                                    <span class="projectTitle"><a onclick="window.open(window.location.protocol + '//' + window.location.host + '/detail/' + {$course->course_id})">{$course->course_title}</a></span>
+                                    <div class="bottom clearfix">
+                                        <time class="time"><php>echo Date('Y-m-d H:i:s', $course->course_time)</php></time>
+                                        <div class="price">
+                                            <span class="original-price">￥1599</span>
+                                            <span class="discount-price">￥1599</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <php>}</php>
+                    </div>
+                </div>
+                <div class="col-md-2  hidden-sm hidden-xs"><img src="http://ozg76yopg.bkt.clouddn.com/all.png" alt="" class="vertImg" /></div>
+            </div>
+        </div>
+    </foreach>
+</block>

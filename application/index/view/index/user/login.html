@@ -1,0 +1,178 @@
+<extend name="index/index/base" />
+<block name="customer">
+    <style>
+        .code-verify{
+            margin-top: 5px;
+        }
+    </style>
+    <script>
+      let isRight = ''
+      function checkCode(){
+        $.ajax({
+          url: "/index/user/verifyCodeCheck",
+          type: "POST",
+          data:{
+            code: $('#verify').val()
+          },
+          dataType: "json",
+          success: function(data,textStatus){
+            if(data)
+            {
+              isRight = true;
+              $('#errMsg').html('')
+              $('#verifyDiv').removeClass('has-warning');
+              $('#verifyDiv').addClass('has-success');
+            }
+            else
+            {
+              isRight = false;
+              $('#errMsg').html('验证码错误！')
+              $('#verifyDiv').removeClass('has-success');
+              $('#verifyDiv').addClass('has-warning');
+            }
+          }
+        });
+      }
+
+      /**
+       * JS获取url参数
+       * 分类 编程技术
+       * 以下JS函数用于获取url参数:
+       */
+      function getUrlParam(name) {
+        //构造一个含有目标参数的正则表达式对象
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        //匹配目标参数
+        var r = window.location.search.substr(1).match(reg);
+        //返回参数值
+        if(r != null) {
+          return decodeURI(r[2]);
+        }
+        return null;
+      }
+      function setLocalStorageData(data)
+      {
+        for(let i in data)
+        {
+          localStorage.setItem(i, data[i])
+        }
+        localStorage.setItem('auth_time', Date.parse(new Date()))
+      }
+      function removeLocalStorageData()
+      {
+        localStorage.removeItem('id')
+        localStorage.removeItem('userName')
+        localStorage.removeItem('token')
+        localStorage.removeItem('ip')
+        localStorage.removeItem('time')
+      }
+      // 使用jsencrypt类库加密js方法，
+      function encryptRequest(reqUrl, data, publicKey){
+        var encrypt = new JSEncrypt();
+        encrypt.setPublicKey(publicKey);
+        // ajax请求发送的数据对象
+        const sendData = {};
+        // 将data数组赋给ajax对象
+        for(let key in data){
+          sendData[key] = encrypt.encrypt(data[key]);
+        }
+        $.ajax({
+          url: reqUrl,
+          type: 'post',
+          data: sendData,
+          dataType: 'json',
+          success: function (data) {
+            console.log(data)
+            if (data) window.location.href = data
+          },
+          error: function (xhr) {
+            $('#errMsg').html('用户名或密码错误！')
+            $('#username').val('')
+            $('#password').val('')
+          }
+        });
+      }
+      $(document).ready(function(){
+        let aim = getUrlParam('r');
+        $('#verify').blur(function(){
+          $('#errMsg').html('')
+          $('#verifyDiv').removeClass('has-success has-warning');
+          if($('#verify').val() === '')
+          {
+            $('#errMsg').html('请输入验证码！')
+            return
+          }
+          checkCode();
+        });
+        $('#submit').click(function(){
+          if(isRight === '')checkCode();
+          if(!isRight)
+          {
+            $('#errMsg').val('验证码错误！')
+            return false;
+          }
+          else
+          {
+            let res = {};
+            let data = $("#form").serializeArray()
+            $.each(data, function() {
+              if(this.name === 'verify') return
+              res[this.name] = this.value
+            })
+            if (aim !== null || aim !== undefined)
+            {
+              aim = '/index/user/login?' + 'r=' + aim
+            }
+            else
+            {
+              aim = '/index/user/login'
+            }
+            encryptRequest(aim, res, $('#pubkey').val());
+          }
+          return false
+        });
+        $('#code').css('cursor','pointer');
+        $('#code').click(function() {
+          this.src="/index/user/verifycode?t="+Math.random();
+        });
+      });
+    </script>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7">
+1
+            </div>
+            <div class="col-md-5">
+                <form role="form" id="form">
+                    <div class="form-group">
+                        <label>用户名：</label>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="请输入用户名" value="mark">
+                    </div>
+                    <div class="form-group">
+                        <label>密码：</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="输入密码" value="Ups123">
+                    </div>
+                    <div class="form-inline" id="verifyDiv">
+                        <label>验证码：</label>
+                        <input type="text" class="form-control" id="verify" name="verify" placeholder="请输入验证码">
+                        <img src="/index/user/verifycode" alt="" class="img-thumbnail code-verify" id="code"/>
+                    </div>
+                    <div class="form-group checkbox">
+                        <label>
+                            <input type="checkbox" name="saveUser"> 保存一周
+                        </label>
+                    </div>
+                    <button class="btn btn-default" id="submit">登录</button>
+                    <div><span style="color:red" id="errMsg"></span></div>
+                    <textarea id="pubkey" cols="30" rows="10" style="display: none">-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDwYV4IPkfNau3aUVojBYAlTH0Z
+K+4qGxYpmUMvbVy/cPBl++LNZjxa18IDvrbmeBUIJK3KwbTq8STA6bEPWQUtCU7Z
++gGPuzmOJDFUttRrkHNcgA1RnBwfdSg0x4wVN0vwnNYn1Wzni9urTC3weDEYTLpF
+/DBPATaN1lnCFzwciwIDAQAB
+-----END PUBLIC KEY-----</textarea>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="__JS__/jsencrypt.js"></script>
+</block>

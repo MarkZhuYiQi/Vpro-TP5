@@ -1,0 +1,502 @@
+<extend name="index/index/base" />
+<block name="customer">
+    <style>
+        ul{
+            list-style: none;
+        }
+        .order_container{
+            background-color: #ffffff;
+            box-shadow: 2px 2px 2px #cccccc;
+            padding:10px;
+        }
+        .course_label{
+            margin:10px 20px 10px;
+            font-weight:bold;
+            display: block;
+        }
+        .course_detail{
+            margin:10px 0;
+            color:#666;
+        }
+        .bottom-line{
+            width:97%;
+            border:1px solid #efefef;
+            margin:0 auto;
+        }
+        .course_image{
+            display:block;
+            width:50%;
+            margin:0 auto 10px;
+        }
+        .course_cost{
+            font-size:16px;
+            color: #FF4949;
+            font-weight:bold;
+        }
+        .price_label{
+            display:inline-block;
+            height:140px;
+            width:100%;
+            float:right;
+        }
+        .course_price{
+            text-align:right;
+        }
+        .course_price span{
+            display: inline-block;
+        }
+        .summary_label{
+            width:200px;
+            text-align: left;
+            color:#666;
+        }
+        .summary_value{
+            text-align:left;
+            width:150px;
+            color:#666;
+        }
+        .coupon-card{
+            border: 2px solid #eee;
+        }
+        .discount{
+            margin:20px;
+        }
+        .discount_empty{
+            display:block;
+            text-align:center;
+            margin:10px auto;
+            color:#ccc;
+        }
+        .discount_area{
+            cursor:pointer;
+        }
+        .discount_area_not_matched{
+            cursor: not-allowed;
+        }
+        .discount_detail{
+            background-color:#ff7777;
+            color:#ffffff;
+            padding:15px;
+            font-size:15px;
+        }
+        .discount_vaild_date{
+            color:#FFE6E6;
+            font-size: 13px;
+        }
+        .discount_detail_not_matched{
+            background-color:#cccccc;
+            color:#ffffff;
+        }
+        .discount_detail_area{
+            line-height: 30px;
+            height: 30px;
+        }
+        .discount_large_font{
+            font-size: 30px;
+        }
+        .discount_limit{
+            font-size: 15px;
+        }
+        .discount_type{
+            padding:10px 15px;
+            color:#ff7777;
+        }
+        .discountSelected{
+            border:2px solid #ff3333 !important;
+        }
+        .confirm-container{
+            background:#efefef;
+            padding:10px 20px 10px;
+            margin:10px 0;
+        }
+        .confirm{
+            height:1.5em;
+            line-height:1.5em;
+            color:#666;
+        }
+        .confirm_price{
+            font-size:30px;
+            font-weight:bold;
+            color:#FF4949;
+        }
+        .order_place{
+            float:right;
+            margin:10px 90px 10px;
+        }
+        .dialog_content{
+            display:block;
+            font-size:16px;
+            color:#666;
+            text-align:center;
+        }
+        .dialog_flag{
+            display:block;
+            font-size:40px;
+            line-height:40px;
+            color:#FF4949;
+            margin:10px auto;
+            text-align:center;
+        }
+        .tabs-container{
+            width: 97%;
+            margin: 0 auto;
+        }
+        #coupon .col-md-3{
+            padding: 7.5px;
+        }
+
+        /*加载中相关代码*/
+        .spinner {
+            margin: 100px auto;
+            width: 50px;
+            height: 40px;
+            text-align: center;
+            font-size: 10px;
+        }
+
+        .spinner > div {
+            background-color: #333;
+            height: 100%;
+            width: 6px;
+            display: inline-block;
+
+            -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+            animation: sk-stretchdelay 1.2s infinite ease-in-out;
+        }
+
+        .spinner .rect2 {
+            -webkit-animation-delay: -1.1s;
+            animation-delay: -1.1s;
+        }
+
+        .spinner .rect3 {
+            -webkit-animation-delay: -1.0s;
+            animation-delay: -1.0s;
+        }
+
+        .spinner .rect4 {
+            -webkit-animation-delay: -0.9s;
+            animation-delay: -0.9s;
+        }
+
+        .spinner .rect5 {
+            -webkit-animation-delay: -0.8s;
+            animation-delay: -0.8s;
+        }
+
+        @-webkit-keyframes sk-stretchdelay {
+            0%, 40%, 100% { -webkit-transform: scaleY(0.4) }
+            20% { -webkit-transform: scaleY(1.0) }
+        }
+
+        @keyframes sk-stretchdelay {
+            0%, 40%, 100% {
+                transform: scaleY(0.4);
+                -webkit-transform: scaleY(0.4);
+            }  20% {
+                   transform: scaleY(1.0);
+                   -webkit-transform: scaleY(1.0);
+               }
+        }
+        /*加载中相关代码*/
+    </style>
+    <script>
+        let cashReturn = 0;
+        let coupons = 0;
+        let orderInfo = {
+          orderCourses: [],
+          orderId: -1,
+          coupon: -1,
+          sumPrice: {$sumPrice}
+        }
+        let courses = <?php echo json_encode($courses); ?>
+    </script>
+    <div class="cart-container">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" id="cartModal" style="display: none"></button>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="order_container">
+            <div id="btn" style="display: none"></div>
+            <div class="row">
+                <div class="col-md-12">
+                    <span class="course_label">订购人信息</span>
+                </div>
+                <div class="col-md-12">
+
+                </div>
+            </div>
+            <hr class="bottom-line">
+            <div class="row">
+                <div class="col-md-12">
+                    <span class="course_label">订购清单</span>
+                </div>
+            </div>
+            <hr class="bottom-line" />
+            <foreach name="courses" item="course">
+                <div class="course_detail">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div>
+                                <img src="{$course['course_cover_address']}" class="course_image">
+                            </div>
+                        </div>
+                        <div class="col-md-5"><span>{$course['course_title']}</span></div>
+                        <div class="col-md-2"><span class="course_cost">{$course['course_price']}</span></div>
+                        <div class="col-md-2">授课中</div>
+                    </div>
+                    <hr class="bottom-line" />
+                </div>
+            </foreach>
+
+            <div class="tabs-container">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation"><a href="#coupon" aria-controls="coupon" role="tab" data-toggle="tab">优惠券</a></li>
+                    <li role="presentation"><a href="#outDateCoupon" aria-controls="outDateCoupon" role="tab" data-toggle="tab">已过期</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane fade in" id="coupon">
+                        <div class="spinner">
+                            <div class="rect1"></div>
+                            <div class="rect2"></div>
+                            <div class="rect3"></div>
+                            <div class="rect4"></div>
+                            <div class="rect5"></div>
+                        </div>
+                        <div style="margin:0 8px;">
+                            <div class="row coupons-area"></div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade in" id="outDateCoupon">345</div>
+                </div>
+            </div>
+
+
+                    <div class="empty" style="display: none">
+                        <span class="discount_empty">
+                            空空如也~
+                        </span>
+                    </div>
+                    <hr class="bottom-line">
+
+
+            <div>
+                <div class="price_label">
+                    <ul class="course_price">
+                        <li><span class="summary_label">商品价格总计：</span><span class="summary_value">{$sumPrice}</span></li>
+                        <li><span class="summary_label">返现：</span><span class="summary_value cashReturn">0.00</span></li>
+                        <li><span class="summary_label">优惠：</span><span class="summary_value cashDiscount">0.00</span></li>
+                        <li class="confirm-container"><span class="summary_label confirm">应付总额：</span><span class="confirm summary_value confirm_price">{$sumPrice}</span></li>
+                    </ul>
+                </div>
+                <div class="order_place">
+                    <button :loading="btnStatus" type="button" class="order_button btn btn-ff btn-md" id="placeOrder">提交订单</button>
+                </div>
+                <div style="clear:both;float:none;"></div>
+            </div>
+        </div>
+        <div class="order_container" v-if="step === 2">
+            <div>
+                <span style="display: block; padding: 20px 40px; font-size: 22px; font-weight: bold">正在支付中，稍后将在订单信息中通知支付结果</span>
+            </div>
+            <el-card class="box-card">
+                <div slot="header" class="clearfix">
+                    <span>订单信息</span>
+                    <el-button style="float: right; padding: 3px 0" type="text">刷新进度</el-button>
+                </div>
+                <div v-for="(value, key) in orderProgress" :key="key" class="text item">
+                    <span v-if="key !== 'pay_url'">{{key + ' : ' + value }}</span>
+                    <span v-else>{{key + ' : '}}<el-button @click="openwin(value)" type="text">付款链接</el-button></span>
+                </div>
+            </el-card>
+        </div>
+        <el-dialog
+                title="出错啦"
+                :visible.sync="warningDialog"
+                width="25%"
+                center
+                :close-on-click-modal="false"
+                :close-on-press-escape="false"
+                :show-close="false"
+        >
+            <span class="dialog_content"><i class="el-icon-warning dialog_flag"></i>订单超时或信息有误，请检查信息返回购物车重新下单</span>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="backToCart()">确 定</el-button>
+            </span>
+        </el-dialog>
+        <div class="col-md-3 coupon-card-area" style="display: none;">
+            <div class="coupon-card" key="0">
+                <div class="discount_area">
+                    <div class="discount_detail">
+                        <span class="discount_detail_area discount_large_font">￥</span>
+                        <span class="discount_detail_area discount_large_font"> %coupon_discount%</span>
+                        <span class="discount_limit">满 %coupon_limit%</span>
+                        <div class="discount_vaild_date">有效期至 %coupon_end_date%</div>
+                    </div>
+                    <div class="discount_type">
+                        <span>[全品类]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let couponTemplate = `
+        <div class="col-md-3 coupon-card-area" style="display: none;">
+            <div class="coupon-card" key="%key%">
+                <div class="discount_area">
+                    <div class="discount_detail">
+                        <span class="discount_detail_area discount_large_font">￥</span>
+                        <span class="discount_detail_area discount_large_font"> %coupon_discount%</span>
+                        <span class="discount_limit">满 %coupon_limit%</span>
+                        <!--<div class="discount_vaild_date">有效期至 2018-12-31 00:00:00</div>-->
+                        <div class="discount_vaild_date">有效期至 %coupon_end_date%</div>
+                    </div>
+                    <div class="discount_type">
+                        <span>[全品类]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `
+        function modal(msg) {
+          $('.modal-body').html(msg)
+          $('#myModal').modal()
+          $('#myModal').on('hide.bs.modal', function(e) {
+            window.location.href = window.location.protocol + '//' + window.location.host + '/cart'
+          })
+        }
+        function getCoupon(genCouponCallback) {
+          const orderId = window.location.pathname.split('/')[2];
+          $.ajax({
+            type: 'GET',
+            url: '/coupon/' + orderId,
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function(data) {
+              $('.spinner').css('display', 'none')
+              if (data['code'] !== 20000)
+              {
+                modal(data['data'])
+              } else {
+                coupons = data['data']
+                if (coupons.length === 0) {
+                  $('.empty').css('display', 'block')
+                } else {
+                  $('.empty').css('display', 'none')
+                  genCouponCallback()
+                }
+              }
+            }
+          })
+        }
+        function selectCoupon() {
+          let obj = $(this)
+          $('.coupon-card').each(function (index) {
+            let sumPrice = parseFloat({$sumPrice});
+            const couponKey = parseInt(obj.attr('key'))
+            if (couponKey === index) {
+              if ($(this).hasClass('discountSelected')) {
+                $(this).removeClass('discountSelected')
+                sumPrice = genPrice(0, 'cashDiscount', sumPrice)
+                orderInfo['coupon'] = -1
+                orderInfo['sumPrice'] = sumPrice
+              } else {
+                $(this).addClass('discountSelected')
+                sumPrice = genPrice(coupons[couponKey]['coupon_discount'], 'cashDiscount', sumPrice)
+                console.log(coupons[couponKey])
+                orderInfo['coupon'] = coupons[couponKey]
+                orderInfo['sumPrice'] = sumPrice
+              }
+            } else {
+              $(this).removeClass('discountSelected')
+            }
+          })
+        }
+        function genCoupons() {
+          let couponCard = $('.coupons-area')
+          couponCard.empty()
+          let couponDetail = []
+          for(i in coupons) {
+            let dom = couponTemplate
+            dom = dom.replace(/none/g, 'block')
+            dom = dom.replace(/%key%/g, i)
+            couponDetail = coupons[i]
+            for(key in couponDetail) {
+              let pattern = eval("/%" + key + "%/")
+              if (key === 'coupon_end_date') {
+                dom = dom.replace(pattern, parseTime(couponDetail[key]))
+                continue
+              }
+              dom = dom.replace(pattern, couponDetail[key])
+            }
+            couponCard.append($(dom))
+          }
+        }
+        function genPrice(discount, domClass, sumPrice) {
+          if (discount !== 0) {
+            sumPrice -= parseFloat(discount)
+          }
+          console.log(sumPrice)
+          $('.' + domClass).html(parseFloat(discount).toFixed(2))
+          $('.confirm_price').html((parseFloat(sumPrice)).toFixed(2))
+          return sumPrice
+        }
+        function genOrder() {
+          const orderId = window.location.pathname.split('/')[2];
+          orderInfo['orderId'] = orderId
+          orderInfo['orderCourses'] = []
+          for(item of courses) {
+            orderInfo['orderCourses'].push({
+              courseId: item['course_id'],
+              coursePrice: item['course_price']
+            })
+          }
+        }
+
+        function placeOrder() {
+          if ($('#placeOrder').hasClass('disabled')) {
+            return false
+          }
+          $('#placeOrder').addClass('disabled').text('loading...')
+          console.log(orderInfo)
+          $.ajax({
+            type: 'POST',
+            data: JSON.stringify(orderInfo),
+            url: '/putorder/place_order',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function(data) {
+              console.log(data)
+            }
+          })
+        }
+        $(document).ready(function() {
+          // setTimeout(modal, 2000)
+          $('a[href="#coupon"]').on('show.bs.tab', function (e) {
+            $('.spinner').css('display', 'block')
+            getCoupon(genCoupons)
+          })
+          $('.tabs-container').on('click', '.coupon-card ', selectCoupon)
+          genOrder()
+          $('#placeOrder').click(placeOrder)
+        })
+
+    </script>
+</block>

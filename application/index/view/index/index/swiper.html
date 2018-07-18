@@ -1,0 +1,83 @@
+<link rel="stylesheet" href="__CSS__/swiper.css">
+<style>
+    .swiper-container {
+        width: 100%;
+        height: 343px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .swiper-slide {
+        text-align: center;
+        font-size: 18px;
+        background: #fff;
+
+        /* Center slide text vertically */
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+    }
+</style>
+<div class="swiper-container">
+    <div class="swiper-wrapper">
+        <div class="swiper-slide">Slide 1</div>
+        <div class="swiper-slide">Slide 2</div>
+        <div class="swiper-slide">Slide 3</div>
+        <div class="swiper-slide">Slide 4</div>
+        <div class="swiper-slide">Slide 5</div>
+        <div class="swiper-slide">Slide 6</div>
+        <div class="swiper-slide">Slide 7</div>
+        <div class="swiper-slide">Slide 8</div>
+        <div class="swiper-slide">Slide 9</div>
+        <div class="swiper-slide">Slide 10</div>
+    </div>
+    <!-- Add Pagination -->
+    <div class="swiper-pagination"></div>
+    <!-- Add Arrows -->
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+</div>
+
+<script src="__JS__/swiper.js"></script>
+<script>
+    const swiper = new Swiper('.swiper-container', {
+      notNextTick: true,
+      //自动播放
+      autoplay: true,
+      loop: true,
+      //横向滚动
+      direction : 'horizontal',
+      //滚动速度
+      speed:300,
+      //指针会变成手掌
+      grabCursor : true,
+      //人工操作后动画不停止
+      autoplayDisableOnInteraction : false,
+      //可以用滚轮控制
+      mousewheelControl : true,
+      //为前进后退按钮设置功能
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      loop: true,
+      effect:'fade',
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      paginationClickable :true,
+//                    autoHeight:true,
+    })
+    $(document).ready(function () {
+      
+    })
+</script>

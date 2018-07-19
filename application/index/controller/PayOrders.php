@@ -30,13 +30,13 @@ class PayOrders extends Base{
     {
         file_put_contents('./alipay_notify', '');
         $data = Request::instance()->param();
-        file_put_contents('./alipay_notify', $data, FILE_APPEND);
+        file_put_contents('./alipay_notify', var_export($data, true), FILE_APPEND);
         try {
             $data = Pay::alipay($this->config)->verify();
-            file_put_contents('./alipay_notify', $data, FILE_APPEND);
+            file_put_contents('./alipay_notify', var_export($data, true), FILE_APPEND);
         } catch (InvalidSignException $e) {
             $err = $e->getMessage();
-            file_put_contents('./alipay_notify', $data, FILE_APPEND);
+            file_put_contents('./alipay_notify', var_export($data, true), FILE_APPEND);
         }
     }
 
@@ -50,15 +50,11 @@ class PayOrders extends Base{
     public function test()
     {
         var_export(getcwd());
+
     }
-    public function index()
+    public function pcpay($orderInfo)
     {
-        $order = [
-            'out_trade_no' => time(),
-            'total_amount' => '1',
-            'subject' => 'test subject - 测试1',
-        ];
-        $alipay = Pay::alipay($this->config)->web($order);
+        $alipay = Pay::alipay($this->config)->web($orderInfo);
         $alipay->send();
     }
     public function mobile()

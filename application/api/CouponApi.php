@@ -21,18 +21,6 @@ use think\Db;
  */
 class CouponApi extends BaseApi
 {
-    // 优惠券存放地址前缀
-    private $couponPrefix = 'coupon';
-    // 用户优惠券存放地址前缀
-    private $userCouponPrefix = 'userCoupon';
-    // 用户优惠券存放是否还存在地址前缀
-    private $userCouponIsExistedPrefix = 'userCouponIsExisted';
-    // 用户有效优惠券地址存放前缀
-    private $validUserCouponPrefix = 'validUserCoupon';
-    // 用户优惠券使用地址存放前缀
-    private $userCouponUsedPrefix = 'userCouponUsed';
-    private $authId = -1;
-
     /**
      * 获得用户所拥有的优惠券信息
      * @param int $authId

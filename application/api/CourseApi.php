@@ -31,7 +31,7 @@ class CourseApi extends BaseApi
      */
     public function checkCourseExists($courseId)
     {
-        return $this->redis->hGetAll($courseId);
+        return $this->redis->hGetAll('VproCourses' . $courseId);
     }
 
     public function genCourseList($list)

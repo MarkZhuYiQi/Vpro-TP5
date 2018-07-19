@@ -480,10 +480,12 @@
             type: 'POST',
             data: JSON.stringify(orderInfo),
             url: '/putorder/place_order',
-            dataType: 'json',
+            dataType: 'html',
             contentType: 'application/json',
             success: function(data) {
-              console.log(data)
+              // data = JSON.parse(data)
+              // console.log(data.data)
+              $('body').html(data)
             }
           })
         }
@@ -496,6 +498,9 @@
           $('.tabs-container').on('click', '.coupon-card ', selectCoupon)
           genOrder()
           $('#placeOrder').click(placeOrder)
+
+          $('body').html()
+
         })
 
     </script>

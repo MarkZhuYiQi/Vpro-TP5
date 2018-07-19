@@ -7,6 +7,8 @@
  */
 namespace app\api;
 
+use think\Db;
+
 class OrderApi extends BaseApi {
     public function getOrderCourseIds($orderId) {
         $courseIds = json_decode($this->redis->get($orderId));
@@ -27,19 +29,15 @@ class OrderApi extends BaseApi {
     }
     public function checkOrderId($orderId)
     {
-        return $this->redis->get($orderId);
-    }
-    public function placeOrder()
-    {
-
+        return json_decode($this->redis->get($orderId));
     }
     public function checkOrderCourseId(array $courseIds, array $courses):bool
     {
         $courseApi = new CourseApi();
-        $frontCourseIds = array_filter($courses, function($item) {
-            return $item['courseIds'];
-        });
-        if (array_diff($courseIds, $frontCourseIds))
+        $frontCourseIds = array_map(function($item) {
+            return $item['courseId'];
+        }, $courses);
+        if (count(array_diff($courseIds, $frontCourseIds)))
         {
             return false;
         }
@@ -48,5 +46,54 @@ class OrderApi extends BaseApi {
             if (!$courseApi->checkCourseExists($id)) return false;
         }
         return true;
+    }
+    public function placeOrder(array $orderObj)
+    {
+        if (count($orderObj) === 0) return false;
+        $couponIsUsed = 0;
+        $discount = 0;
+        if (count($orderObj['coupon']) > 0)
+        {
+            $couponIsUsed = $orderObj['coupon']['coupon_id'];
+            $discount = $orderObj['coupon']['coupon_discount'];
+            // 优惠券已被使用，记录到redis中
+            $this->redis->setBit($this->userCouponUsedPrefix . $orderObj['authId'], $orderObj['coupon'], 1);
+        }
+        $coursesData = [];
+        foreach($orderObj['courses'] as $course)
+        {
+            array_push($coursesData, [
+                'order_id'      =>  $orderObj['orderId'],
+                'course_id'     =>  $course['course_id'],
+                'course_price'  =>  $course['course_price']
+            ]);
+        }
+        Db::startTrans();
+        try{
+            // 生成主订单
+            Db::table('vpro_order')->insert([
+                'order_id'              =>      $orderObj['orderId'],
+                'order_price'           =>      $orderObj['orderPrice'],
+                'order_time'            =>      time(),
+                'user_id'               =>      $orderObj['authId'],
+                'order_coupon_used'     =>      $couponIsUsed,
+                'order_discount'        =>      $discount,
+                'order_payment'         =>      0,
+                'order_title'           =>      $orderObj['orderTitle'],
+                'order_payment_id'      =>      null,
+                'order_payment_price'   =>      0
+            ]);
+            // 生成子订单
+            Db::table('vpro_order_sub')->insertAll($coursesData);
+            Db::commit();
+            // 记录操作日志
+
+            return true;
+        } catch(\Exception $e) {
+            var_export($e->getMessage());
+            // 记录失败日志
+            Db::rollback();
+            return false;
+        }
     }
 }

@@ -114,8 +114,7 @@ class PutOrder extends Base
 //            $validate->getError()
             return ReturnFormat::json('下单系统错误，建议联系网站', 'ORDER_OBJ_VALIDATE_ERROR');
         }
-//        if ($orderApi->placeOrder($orderObj))
-        if (true)
+        if ($orderApi->placeOrder($orderObj))
         {
             $pay = new PayOrders();
             return $pay->pcpay([

@@ -1,20 +1,20 @@
 array (
-  'gmt_create' => '2018-07-19 16:29:51',
+  'gmt_create' => '2018-07-19 22:07:55',
   'charset' => 'GBK',
-  'gmt_payment' => '2018-07-19 16:30:01',
-  'notify_time' => '2018-07-19 16:30:03',
-  'subject' => 'ï¿½ï¿½Ö°ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½Excelï¿½ï¿½Javaï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å½Ì³Ì¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½',
-  'sign' => 'Aj/4RnaAS+CPrF3Dah8hImM1p60sOtkAL9rxC3xB4rWMzlKJpdhbxkzsFcziVZU4or3qGzoc5kmOgxFUg89417+/9hlDNXwTEjYsqJ2ziRkRg2ezxFiFcXEwzuOXUlOKu8ELyjmCd5lTuORTpm+z/iyAhndbPgCS90DsGRCEMRlEaID/GZlB3jqWnpFYqI/oe8GoXRNnotjqI3wOD4Q9QJL1El798bb5Zqm7IoRwg3cDUaw0lMSTRd+hgI4DrYEUBL/9OYtuwKKA9Vzdsy0vsQGAxn/m8NqsSpWCKxcmUEYBmCGlxC+lW1xZK5vlkoGepTqZBnWaI+wI/95jcCT7IA==',
+  'gmt_payment' => '2018-07-19 22:08:01',
+  'notify_time' => '2018-07-19 22:08:02',
+  'subject' => '¸øÖ°³¡ÐÂÈËµÄExcel¿ÎJavaÁã»ù´¡ÈëÃÅ½Ì³Ì¡ª°üº¬ÃæÏò¶ÔÏó¡¾',
+  'sign' => 'AgqvOUa3MgyPwQNJobS0RPlO0/YnWCG86O3mEQgdXnJv0e98VcHHwofLOjgdDtXzllxsMJ93Lp9YUgmk+14W2nHsemp/Ynk5yXRB0gKMnHDR4Gi4cwt1tWMdtasd1JvuKUoXr/ocZ9X5qRb4UA7xPYc353y6IqITT+LZtPB9jP/AhMjAdFPiLj15KJICigCRAqb+g0AGdxF8xMTkrKRlAO5H4kLxrYzrhJoPLdMWcwdnbOabe7Jn0CwtyCY6DpotrBG+Bvk5ukKAZmZ4a40pXvJRlfJpcKS1jB/ysQKlfli91Jxzba6DcusHZiIhlq27eY+yJl8hO+F/L6vsCp1BAQ==',
   'buyer_id' => '2088102173082141',
   'invoice_amount' => '148.90',
   'version' => '1.0',
-  'notify_id' => '9a50c72245b5cbd1a727b2e6723038dh2y',
+  'notify_id' => '6802c16466886a2160dfae064ed40b5h2y',
   'fund_bill_list' => '[{"amount":"148.90","fundChannel":"ALIPAYACCOUNT"}]',
   'notify_type' => 'trade_status_sync',
-  'out_trade_no' => '6419262446682247168',
+  'out_trade_no' => '6419350309440589824',
   'total_amount' => '148.90',
   'trade_status' => 'TRADE_SUCCESS',
-  'trade_no' => '2018071921001004140203730381',
+  'trade_no' => '2018071921001004140203737542',
   'auth_app_id' => '2016082000290082',
   'receipt_amount' => '148.90',
   'point_amount' => '0.00',
@@ -22,29 +22,17 @@ array (
   'buyer_pay_amount' => '148.90',
   'sign_type' => 'RSA2',
   'seller_id' => '2088102172130805',
-)
-array (
-  'gmt_create' => '2018-07-19 16:29:51',
-  'charset' => 'GBK',
-  'gmt_payment' => '2018-07-19 16:30:01',
-  'notify_time' => '2018-07-19 16:30:03',
-  'subject' => 'ï¿½ï¿½Ö°ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½Excelï¿½ï¿½Javaï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å½Ì³Ì¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½',
-  'sign' => 'Aj/4RnaAS+CPrF3Dah8hImM1p60sOtkAL9rxC3xB4rWMzlKJpdhbxkzsFcziVZU4or3qGzoc5kmOgxFUg89417+/9hlDNXwTEjYsqJ2ziRkRg2ezxFiFcXEwzuOXUlOKu8ELyjmCd5lTuORTpm+z/iyAhndbPgCS90DsGRCEMRlEaID/GZlB3jqWnpFYqI/oe8GoXRNnotjqI3wOD4Q9QJL1El798bb5Zqm7IoRwg3cDUaw0lMSTRd+hgI4DrYEUBL/9OYtuwKKA9Vzdsy0vsQGAxn/m8NqsSpWCKxcmUEYBmCGlxC+lW1xZK5vlkoGepTqZBnWaI+wI/95jcCT7IA==',
-  'buyer_id' => '2088102173082141',
-  'invoice_amount' => '148.90',
-  'version' => '1.0',
-  'notify_id' => '9a50c72245b5cbd1a727b2e6723038dh2y',
-  'fund_bill_list' => '[{"amount":"148.90","fundChannel":"ALIPAYACCOUNT"}]',
-  'notify_type' => 'trade_status_sync',
-  'out_trade_no' => '6419262446682247168',
-  'total_amount' => '148.90',
-  'trade_status' => 'TRADE_SUCCESS',
-  'trade_no' => '2018071921001004140203730381',
-  'auth_app_id' => '2016082000290082',
-  'receipt_amount' => '148.90',
-  'point_amount' => '0.00',
-  'app_id' => '2016082000290082',
-  'buyer_pay_amount' => '148.90',
-  'sign_type' => 'RSA2',
-  'seller_id' => '2088102172130805',
+)array (
+  'msg' => 'Alipay Sign Verify FAILED',
+  'file' => '/php/vendor/yansongda/pay/src/Gateways/Alipay.php',
+  'line' => 120,
+  'trace' => '#0 /php/application/index/controller/PayOrders.php(39): Yansongda\\Pay\\Gateways\\Alipay->verify()
+#1 [internal function]: app\\index\\controller\\PayOrders->notify()
+#2 /php/thinkphp/library/think/App.php(343): ReflectionMethod->invokeArgs(Object(app\\index\\controller\\PayOrders), Array)
+#3 /php/thinkphp/library/think/App.php(606): think\\App::invokeMethod(Array, Array)
+#4 /php/thinkphp/library/think/App.php(456): think\\App::module(Array, Array, true)
+#5 /php/thinkphp/library/think/App.php(139): think\\App::exec(Array, Array)
+#6 /php/thinkphp/start.php(19): think\\App::run()
+#7 /php/public/index.php(17): require(\'/php/thinkphp/s...\')
+#8 {main}',
 )

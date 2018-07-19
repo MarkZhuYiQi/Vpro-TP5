@@ -7,6 +7,7 @@
  */
 namespace app\index\controller;
 
+use app\api\CouponApi;
 use app\api\CourseApi;
 use app\api\OrderApi;
 use app\common\controller\Base;
@@ -48,30 +49,33 @@ class PutOrder extends Base
     {
         $params = Request::instance()->param();
         $orderApi = new OrderApi();
+        // 检查order是否还存在于redis
         if (!$courseIds = $orderApi->checkOrderId($params['orderId'])) return ReturnFormat::json('订单不存在或者已过期，请返回购物车重新提交', 'ORDER_EXPIRED');
-        $courseApi = new CourseApi();
+        // 检查courseId是否和后台一致并且在缓存中
+        if (!$this->$orderApi->checkOrderCourseId($courseIds, $params['orderCourses'], $orderApi)) return ReturnFormat::json('订单课程信息非法', 'ORDER_COURSE_NOT_FOUND');
         $sumPrice = 0;
+        $courseApi = new CourseApi();
         foreach($params['orderCourses'] as $item)
         {
-            if (!($course = $courseApi->checkCourseExists($item['courseId']))) return ReturnFormat::json('课程信息未知', 'ORDER_COURSE_NOT_FOUND');
+            // 拿到课程信息
+            $course = $courseApi->getCourseInfo($item['courseId'], 'course');
             if (floatval($item['coursePrice']) !== floatval($course['course_price'])) return ReturnFormat::json('课程信息非法', 'ORDER_COURSE_NOT_FOUND');
             $sumPrice += floatval($course['course_price']);
         }
-        if ($sumPrice !== floatval($params['sumPrice']))
-
-    }
-    public function checkOrderCourseId($courseIds, $courses)
-    {
-        $frontCourseIds = array_filter($courses, function($item) {
-            return $item['courseIds'];
-        });
-        if (array_diff($courseIds, $frontCourseIds))
-        {
-            return false;
+        // 判断优惠券信息
+        if ($params['coupon']) {
+            $couponApi = new CouponApi();
+            if ($couponApi->checkUserHasCoupon($params['coupon']['coupon_id'], session('authId'))) return ReturnFormat::json('优惠券资格非法！', 'COUPON_USER_ILLEGAL');
+            $couponInfo = $couponApi->genCouponInfo($params['coupon']['coupon_id']);
+            // 优惠券没找着
+            if (!$couponInfo) return ReturnFormat::json('优惠券非法', 'COUPON_NOT_EXIST_ILLEGAL');
+            // 优惠券信息前后台不符
+            if (count(array_diff_assoc($couponInfo, $params['coupon']))) return ReturnFormat::json('优惠券信息错误', 'COUPON_INFO_ILLEGAL');
+            if (!$couponApi->checkCouponForOrder($sumPrice, $couponInfo)) return ReturnFormat::json('优惠券不可用', 'COUPON_NOT_MEET_REQUIREMENT');
+            $sumPrice -= floatval($couponInfo['coupon_discount']);
         }
-        foreach($frontCourseIds as $id)
-        {
-            
-        }
+        // 前后台总价不同
+        if ($sumPrice !== floatval($params['sumPrice'])) return ReturnFormat::json('总价不符', 'ORDER_PRICE_MISMATCH');
+        $this->placeOrder($orderId, $sumPrice, $authId, )
     }
 }

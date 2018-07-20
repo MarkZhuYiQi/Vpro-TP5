@@ -118,9 +118,9 @@ class PutOrder extends Base
         {
             $pay = new PayOrders();
             return $pay->pcpay([
-                'out_trade_no'  =>  $params['orderId'],
+                'out_trade_no'  =>  (string)$params['orderId'],
                 'total_amount'  =>  (string)$sumPrice,
-                'subject'       =>  $orderTitle,
+                'subject'       =>  (string)$orderTitle,
             ]);
         }
         return ReturnFormat::json('下单系统错误，建议联系网站', 'ORDER_PUT_DATABASE_ERROR');

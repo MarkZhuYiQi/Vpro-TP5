@@ -21,6 +21,8 @@ class BaseApi
     protected $userCouponUsedPrefix = 'userCouponUsed';
     protected $authId = -1;
     protected $redis;
+
+    protected $cartPrefix = 'cart';
     function __construct()
     {
         $this->redis = Redis::getRedisHandler();

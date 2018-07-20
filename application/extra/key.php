@@ -39,9 +39,11 @@ return [
     'ORDER_COURSE_NOT_FOUND'                    =>          35002,
     'COURSE_NOT_EXISTED'                        =>          35003,
     'ORDER_OBJ_VALIDATE_ERROR'                  =>          35004,
-    'ORDER_PUT_DATABASE_ERROR'                  =>          35005
+    'ORDER_PUT_DATABASE_ERROR'                  =>          35005,
 
     // pay相关
 
+    // 购物车相关
+    'CART_COURSE_INFO_ERROR'                    =>          36001,
 
 ];

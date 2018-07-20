@@ -4,11 +4,6 @@
         ul{
             list-style: none;
         }
-        .order_container{
-            background-color: #ffffff;
-            box-shadow: 2px 2px 2px #cccccc;
-            padding:10px;
-        }
         .course_label{
             margin:10px 20px 10px;
             font-weight:bold;
@@ -310,21 +305,6 @@
                 </div>
                 <div style="clear:both;float:none;"></div>
             </div>
-        </div>
-        <div class="order_container" v-if="step === 2">
-            <div>
-                <span style="display: block; padding: 20px 40px; font-size: 22px; font-weight: bold">正在支付中，稍后将在订单信息中通知支付结果</span>
-            </div>
-            <el-card class="box-card">
-                <div slot="header" class="clearfix">
-                    <span>订单信息</span>
-                    <el-button style="float: right; padding: 3px 0" type="text">刷新进度</el-button>
-                </div>
-                <div v-for="(value, key) in orderProgress" :key="key" class="text item">
-                    <span v-if="key !== 'pay_url'">{{key + ' : ' + value }}</span>
-                    <span v-else>{{key + ' : '}}<el-button @click="openwin(value)" type="text">付款链接</el-button></span>
-                </div>
-            </el-card>
         </div>
         <el-dialog
                 title="出错啦"

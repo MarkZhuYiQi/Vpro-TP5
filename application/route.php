@@ -29,4 +29,5 @@ return [
     'putorder/[:orderId]'       =>  ['index/PutOrder/index', ['method' => 'get'], ['orderId' => '\d{19}']],
     'putorder/place_order'      =>  ['index/PutOrder/placeOrder', ['method' => 'post']],
     'coupon/:orderId/[:type]'   =>  ['index/coupon/getCoupon', ['method' => 'get'], ['orderId' => '\d{19}', 'type' => '\d{1}']],
+    'orders'                    =>  ['index/Orders/index', ['method' => 'get']]
 ];

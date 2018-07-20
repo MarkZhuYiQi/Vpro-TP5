@@ -1,6 +1,7 @@
 <?php
 namespace app\api;
 use app\common\controller\Redis;
+use app\common\controller\ReturnFormat;
 use app\common\controller\Snowflake;
 use app\common\model\VproCart;
 use app\common\model\VproCartDetail;
@@ -46,12 +47,17 @@ query;
         $res = Db::query($query);
         return $res;
     }
-    public function addToCookieCart($courseId)
+
+    public function combineCourseInfo($courseId)
     {
         $courseApi = new CourseApi();
         $course = $courseApi->getCourseInfo($courseId, 'course');
         $cover = $courseApi->getCourseInfo($courseId, 'cover');
         $author = $courseApi->getCourseInfo($course['course_author'], 'auth');
+        if (!$course || !$cover || !$author)
+        {
+            return false;
+        }
         $cartInfo = [
             'course_id'                 =>  $courseId,
             'course_title'              =>  $course['course_title'],
@@ -62,6 +68,17 @@ query;
             'course_author'             =>  $author['auth_appid'],
             'course_discount_price'     =>  $course['course_discount_price']
         ];
+        return $cartInfo;
+    }
+
+    /**
+     * 未登录状态，添加商品到cookie的购物车中
+     * @param $courseId
+     */
+    public function addToCookieCart($courseId)
+    {
+        $courseInfo = $this->combineCourseInfo($courseId);
+        if (!$courseInfo) return ReturnFormat::json('课程有误，不要乱来~', 'CART_COURSE_INFO_ERROR');
         if ($cart = Cookie::get('cart'))
         {
             $id = $cart[0]['cart_id'];
@@ -75,12 +92,30 @@ query;
         $cartInfo['cart_id'] = $id;
         array_push($cart, $cartInfo);
         Cookie::forever('cart', $cart);
+        return ReturnFormat::json(true);
     }
+
+    /**
+     * 储存在redis中的格式：
+     * 使用集合方式
+     * key: cart[userid]
+     * 以json字符串形式存放
+     * @param $courseId
+     */
     public function addToUserCart($courseId)
     {
-
+        $authId = session('id');
+        $cartKey = $this->cartPrefix . $authId;
+        $courseInfo = $this->combineCourseInfo($courseId);
+        if (!$courseInfo) return ReturnFormat::json('课程有误，不要乱来~', 'CART_COURSE_INFO_ERROR');
+        $this->redis->sAdd($cartKey, $courseInfo);
+        return ReturnFormat::json(true);
     }
 
+    public function checkUserCartIfExisted($cartKey)
+    {
+        return $this->redis->exists($cartKey);
+    }
     /**
      * 购物车ID获取，数据库有以数据库为准，数据库没有以cookie为准，都没有就生成
      * @return int

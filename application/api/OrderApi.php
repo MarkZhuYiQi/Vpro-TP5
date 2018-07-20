@@ -86,6 +86,7 @@ class OrderApi extends BaseApi {
             // 生成子订单
             Db::table('vpro_order_sub')->insertAll($coursesData);
             Db::commit();
+
             // 记录操作日志
 
             return true;

@@ -92,6 +92,7 @@ class CourseApi extends BaseApi
         if (count($res) === 0) {
             // 这里进行计分，如果db没有命中，说明是没有意义的课程id，涉嫌恶意访问，进行恶意积分累加
             Redis::scorePoint(config('key.DB_MISS'));
+            return false;
         }
         return $res[0];
     }

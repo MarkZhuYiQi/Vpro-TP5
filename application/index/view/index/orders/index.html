@@ -1,0 +1,203 @@
+<extend name="index/index/base" />
+<block name="customer">
+    <link rel="stylesheet" href="__CSS__/prettify.css">
+    <style>
+        .orders_white_container{
+            background:#fff;
+        }
+        .orders_white_container span{
+            display: block;
+            width: 100%;
+            font-weight: bold;
+            margin:0 auto;
+            padding:20px;
+        }
+        .detail-show{
+            background:#fff;
+            box-shadow:2px 2px 1px #ccc;
+            margin:10px 0;
+        }
+        #rootwizard{
+            padding:20px;
+        }
+        #rootwizard .nav li a{
+            color: #333;
+        }
+        #rootwizard .nav li a:hover{
+            color: #FF4949;
+            background-color: #fafafa;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        #rootwizard .nav .active a{
+            color: #ff4949;
+        }
+        .orders-card{
+            max-height:none;
+            margin: 0 0 12px 0;
+        }
+        .orders-history-img{
+            width:120px;
+            height:68px;
+        }
+        .origin-price{
+            text-decoration: line-through;
+            color:#ccc;
+        }
+        .order-title{
+            font-size: 14px;
+        }
+        .orders-lab{
+
+        }
+        .orders-history-lab{
+            margin:10px 0;
+        }
+        .tab-content .panel{
+            border-radius: unset;
+        }
+        .tab-content .panel-heading{
+            background-image: none;
+            color: #999;
+
+        }
+    </style>
+    <div class="orders_container">
+        <div class="orders_white_container shadow">
+            <span>我的订单</span>
+        </div>
+        <div id="rootwizard" class="tabbable tabs-left detail-show">
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <ul>
+                        <li><a href="#tab1" data-toggle="tab">全部订单</a></li>
+                        <li><a href="#tab2" data-toggle="tab">待支付</a></li>
+                        <li><a href="#tab3" data-toggle="tab">交易成功</a></li>
+                        <li><a href="#tab4" data-toggle="tab">交易关闭</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tab-content">
+                <div class="tab-pane fade in" id="tab1">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <div class="row order-title">
+                                    <div class="col-md-4">订单编号: 6419520190429532160</div>
+                                    <div class="col-md-4">创建时间：2018-07-21 16:16:16</div>
+                                    <div class="col-md-4"></div>
+                                </div>
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="orders-lab">
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        <div class="orders-history-lab">
+                                            <div class="col-md-3">
+                                                <img class="orders-history-img" :src="v.course_cover_address" alt="" />
+                                            </div>
+                                            <div class="col-md-5"><span @click="jumpTo(v.course_id)">111111111111111111111111111111111111111</span></div>
+                                            <div class="col-md-2">教育教育教育</div>
+                                            <div class="col-md-2">168.00</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="row orders-history-lab">
+                                            <div class="col-md-6">
+                                                <!--<span class="origin-price">168.00</span>-->
+                                                <span class="order-price">168.00</span>
+                                            </div>
+                                            <div class="col-md-6" v-if="items.order_payment==0">等待支付</div>
+                                            <!--<div class="col-md-4" v-if="items.order_payment==1">交易成功</div>-->
+                                            <!--<div class="col-md-4" v-if="items.order_payment==2">交易失败</div>-->
+                                            <!--<div class="col-md-4" v-if="items.order_payment==0"><el-button @click="pay(i)">立即支付</el-button></div>-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <div class="row order-title">
+                                    <div class="col-md-4">订单编号: 6419520190429532160</div>
+                                    <div class="col-md-4">创建时间：2018-07-21 16:16:16</div>
+                                    <div class="col-md-4"></div>
+                                </div>
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="orders-lab">
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        <div class="orders-history-lab">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <img class="orders-history-img" :src="v.course_cover_address" alt="" />
+                                                </div>
+                                                <div class="col-md-5"><span @click="jumpTo(v.course_id)">111111111111111111111111111111111111111</span></div>
+                                                <div class="col-md-2">教育教育教育</div>
+                                                <div class="col-md-2">168.00</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <img class="orders-history-img" :src="v.course_cover_address" alt="" />
+                                                </div>
+                                                <div class="col-md-5"><span @click="jumpTo(v.course_id)">111111111111111111111111111111111111111</span></div>
+                                                <div class="col-md-2">教育教育教育</div>
+                                                <div class="col-md-2">168.00</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <img class="orders-history-img" :src="v.course_cover_address" alt="" />
+                                                </div>
+                                                <div class="col-md-5"><span @click="jumpTo(v.course_id)">111111111111111111111111111111111111111</span></div>
+                                                <div class="col-md-2">教育教育教育</div>
+                                                <div class="col-md-2">168.00</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="row orders-history-lab">
+                                            <div class="col-md-6">
+                                                <!--<span class="origin-price">168.00</span>-->
+                                                <span class="order-price">168.00</span>
+                                            </div>
+                                            <!--<div class="col-md-6" v-if="items.order_payment==0">等待支付</div>-->
+                                            <!--<div class="col-md-4" v-if="items.order_payment==1">交易成功</div>-->
+                                            <!--<div class="col-md-4" v-if="items.order_payment==2">交易失败</div>-->
+                                            <div class="col-md-4" v-if="items.order_payment==0"><button @click="pay(i)" class="btn btn-md btn-ff">立即支付</button></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade in" id="tab2">
+                    <div>
+                        <h3>目录</h3>
+                        <div class="chapterList">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="tab3">
+                    <div class="blank-card">
+                        <span>讨论区即将开放</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="__JS__/jquery.bootstrap.wizard.js"></script>
+    <script src="__JS__/prettify.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('#rootwizard').bootstrapWizard({'tabClass': 'nav nav-tabs'});
+      })
+    </script>
+</block>

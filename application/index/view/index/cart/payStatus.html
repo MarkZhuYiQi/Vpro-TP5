@@ -1,0 +1,63 @@
+<extend name="index/index/base" />
+<block name="customer">
+    <style>
+        .order_container{
+            background-color: #ffffff;
+            box-shadow: 2px 2px 2px #cccccc;
+            padding:10px;
+        }
+        .pay-card{
+            background-color: #FFFFFF;
+            padding: 20px;
+        }
+        .pay-card button{
+            float: right;
+            padding: 3px 0;
+        }
+        .pay-card ul{
+            list-style: none;
+            font-size: 15px;
+            color: #333;
+        }
+        .pay-card ul li{
+            padding: 5px 0;
+        }
+        .pay-card ul li .pay-title{
+            font-weight: bold;
+        }
+        .pay-card ul li .pay-item{
+            padding: 0 0 0 15px;
+        }
+        .pay-card .title{
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .pay-buttons{
+            padding: 20px;
+        }
+    </style>
+    <div class="order_container">
+        <div>
+            <span style="display: block; padding: 20px 20px 10px; font-size: 22px; font-weight: bold">正在支付中，稍后将在订单信息中通知支付结果</span>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="pay-card">
+                    <div slot="header" class="clearfix">
+                        <span class="title">订单信息</span>
+                    </div>
+                    <ul>
+                        <li><span class="pay-title">订单编号：</span><span class="pay-item">{$payInfo['orderId']}</span></li>
+                        <li><span class="pay-title">订单标题：</span><span class="pay-item">{$payInfo['orderTitle']}</span></li>
+                        <li><span class="pay-title">订单金额：</span><span class="pay-item">{$payInfo['orderPrice']}</span></li>
+                        <li><span class="pay-title">订单状态：</span><span class="pay-item">{$payInfo['orderStatus']}</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4 pay-buttons">
+                <button type="button" class="btn btn-ff btn-md pay-button">刷新进度</button>
+                <button type="button" class="btn btn-ff btn-md pay-button">我的订单</button>
+            </div>
+        </div>
+    </div>
+</block>

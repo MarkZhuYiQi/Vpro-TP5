@@ -8,7 +8,6 @@
 namespace app\api;
 
 use app\common\controller\Redis;
-use app\common\model\VproNavbar;
 use think\Db;
 
 class IndexApi

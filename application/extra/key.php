@@ -40,6 +40,7 @@ return [
     'COURSE_NOT_EXISTED'                        =>          35003,
     'ORDER_OBJ_VALIDATE_ERROR'                  =>          35004,
     'ORDER_PUT_DATABASE_ERROR'                  =>          35005,
+    'ORDER_EXPIRED_TIME'                        =>          1800,
 
     // pay相关
 

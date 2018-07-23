@@ -116,6 +116,7 @@ class PutOrder extends Base
         }
         if ($orderApi->placeOrder($orderObj))
         {
+            $orderApi->recordOrderTime($params['orderId']);
             $pay = new PayOrders();
             return $pay->pcpay([
                 'out_trade_no'  =>  (string)$params['orderId'],

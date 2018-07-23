@@ -97,4 +97,12 @@ class OrderApi extends BaseApi {
             return false;
         }
     }
+    public function recordOrderTime($orderId)
+    {
+        $this->redis->setex($this->orderPlaceTimePrefix . $orderId, config('key.ORDER_EXPIRED_TIME'), time());
+    }
+    public function delRecordOrderTime($orderId)
+    {
+        $this->redis->del($this->orderPlaceTimePrefix . $orderId);
+    }
 }

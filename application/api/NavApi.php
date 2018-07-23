@@ -8,7 +8,6 @@
 
 namespace app\api;
 use app\common\model\VproNavbar;
-use app\common\controller\Redis;
 use think\exception\DbException;
 
 class NavApi extends BaseApi

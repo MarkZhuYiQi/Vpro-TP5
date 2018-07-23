@@ -19,6 +19,7 @@ class BaseApi
     protected $validUserCouponPrefix = 'validUserCoupon';
     // 用户优惠券使用地址存放前缀
     protected $userCouponUsedPrefix = 'userCouponUsed';
+    protected $orderPlaceTimePrefix = 'orderPlaceTime';
     protected $authId = -1;
     protected $redis;
 

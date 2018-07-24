@@ -17,8 +17,14 @@ class BaseApi
     protected $userCouponIsExistedPrefix = 'userCouponIsExisted';
     // 用户有效优惠券地址存放前缀
     protected $validUserCouponPrefix = 'validUserCoupon';
+    // 带过期判断的有效期地址
+    protected $validUserCouponPrefixWithExpired = 'validUserCouponWithExpired';
     // 用户优惠券使用地址存放前缀
     protected $userCouponUsedPrefix = 'userCouponUsed';
+    // 优惠券过期条目
+    protected $couponExpiredPrefix = 'couponExpired';
+    // 暂存过期条目
+    protected $expiredStr = 'expiredStr';
     protected $orderPlaceTimePrefix = 'orderPlaceTime';
     protected $authId = -1;
     protected $redis;

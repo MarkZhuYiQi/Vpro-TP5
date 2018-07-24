@@ -8,8 +8,13 @@
 namespace app\api;
 
 use think\Db;
+use think\Request;
 
 class OrderApi extends BaseApi {
+    private $orderPrefix = 'orders';
+    private $unpayOrderPrefix = 'unpayOrders';
+    private $payedOrderPrefix = 'payedOrders';
+    private $expiredOrderPrefix = 'expiredOrders';
     public function getOrderCourseIds($orderId) {
         $courseIds = json_decode($this->redis->get($orderId));
         // 订单已经超时了，商品id已经过期
@@ -104,5 +109,31 @@ class OrderApi extends BaseApi {
     public function delRecordOrderTime($orderId)
     {
         $this->redis->del($this->orderPlaceTimePrefix . $orderId);
+    }
+
+    public function getOrders(int $type)
+    {
+        // 0 待付款 1 支付成功 2 交易关闭
+        $type = intval(Request::instance()->route('type', '1'));
+    }
+    public function getOrdersData($type)
+    {
+        if ($this->redis->exists($this->orderPrefix . session('id')))
+        {
+
+        }
+        $vpro_order = Db::table('vpro_order')
+            ->alias('vo')
+            ->join('vpro_order_sub vos', 'vos.order_id = vo.order_id', 'left')
+            ->where('vo.user_id', session('id'))
+            ->select();
+        $vpro_order = ;
+        if (count($vpro_order))
+        {
+            foreach($vpro_order as $item)
+            {
+
+            }
+        }
     }
 }

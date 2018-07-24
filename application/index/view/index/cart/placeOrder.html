@@ -4,6 +4,9 @@
         ul{
             list-style: none;
         }
+        .order_container{
+            background: #ffffff;
+        }
         .course_label{
             margin:10px 20px 10px;
             font-weight:bold;
@@ -136,7 +139,7 @@
             width: 97%;
             margin: 0 auto;
         }
-        #coupon .col-md-3{
+        #coupon .col-md-3, #outDateCoupon .col-md-3{
             padding: 7.5px;
         }
 
@@ -215,14 +218,14 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                        <h4 class="modal-title" id="myModalLabel">出错啦！</h4>
                     </div>
                     <div class="modal-body">
                         ...
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+                        <!--<button type="button" class="btn btn-primary">Save changes</button>-->
                     </div>
                 </div>
             </div>
@@ -278,17 +281,28 @@
                             <div class="row coupons-area"></div>
                         </div>
                     </div>
-                    <div role="tabpanel" class="tab-pane fade in" id="outDateCoupon">345</div>
+                    <div role="tabpanel" class="tab-pane fade in" id="outDateCoupon">
+                        <div class="spinner">
+                            <div class="rect1"></div>
+                            <div class="rect2"></div>
+                            <div class="rect3"></div>
+                            <div class="rect4"></div>
+                            <div class="rect5"></div>
+                        </div>
+                        <div style="margin:0 8px;">
+                            <div class="row coupons-area"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
 
-                    <div class="empty" style="display: none">
-                        <span class="discount_empty">
-                            空空如也~
-                        </span>
-                    </div>
-                    <hr class="bottom-line">
+            <div class="empty" style="display: block">
+                <span class="discount_empty">
+                    空空如也~
+                </span>
+            </div>
+            <hr class="bottom-line">
 
 
             <div>
@@ -306,20 +320,6 @@
                 <div style="clear:both;float:none;"></div>
             </div>
         </div>
-        <el-dialog
-                title="出错啦"
-                :visible.sync="warningDialog"
-                width="25%"
-                center
-                :close-on-click-modal="false"
-                :close-on-press-escape="false"
-                :show-close="false"
-        >
-            <span class="dialog_content"><i class="el-icon-warning dialog_flag"></i>订单超时或信息有误，请检查信息返回购物车重新下单</span>
-            <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="backToCart()">确 定</el-button>
-            </span>
-        </el-dialog>
         <div class="col-md-3 coupon-card-area" style="display: none;">
             <div class="coupon-card" key="0">
                 <div class="discount_area">
@@ -355,25 +355,29 @@
             </div>
         </div>
         `
-        function modal(msg) {
+        function modal(msg='订单超时或信息有误，请检查信息返回购物车重新下单') {
           $('.modal-body').html(msg)
           $('#myModal').modal()
           $('#myModal').on('hide.bs.modal', function(e) {
             window.location.href = window.location.protocol + '//' + window.location.host + '/cart'
           })
         }
-        function getCoupon(genCouponCallback) {
+        function getCoupon(genCouponCallback, type=1) {
           const orderId = window.location.pathname.split('/')[2];
           $.ajax({
             type: 'GET',
-            url: '/coupon/' + orderId,
+            url: '/coupon/' + orderId + '/' + type,
             dataType: 'json',
             contentType: 'application/json',
             success: function(data) {
               $('.spinner').css('display', 'none')
-              if (data['code'] !== 20000)
+              if (data['code'] === 35001)
               {
+                // 订单已过期
                 modal(data['data'])
+              } else if(data['code'] === 30080) {
+                // 无可用优惠券，显示空空如也
+                $('.empty').css('display', 'block')
               } else {
                 coupons = data['data']
                 if (coupons.length === 0) {
@@ -473,7 +477,13 @@
           // setTimeout(modal, 2000)
           $('a[href="#coupon"]').on('show.bs.tab', function (e) {
             $('.spinner').css('display', 'block')
+            $('.coupons-area').empty()
             getCoupon(genCoupons)
+          })
+          $('a[href="#outDateCoupon"]').on('show.bs.tab', function(e) {
+            $('.coupons-area').empty()
+            $('.spinner').css('display', 'block')
+            getCoupon(genCoupons, 3)
           })
           $('.tabs-container').on('click', '.coupon-card ', selectCoupon)
           genOrder()

@@ -13,6 +13,7 @@ class Orders extends Base
 {
     function index()
     {
+        $this->redirect('/index/user?r=' . request()->url());
         return $this->fetch('index/orders/index');
     }
 }

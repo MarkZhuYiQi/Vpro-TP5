@@ -16,7 +16,9 @@ class Orders extends Base
     {
         if(!session('id')) $this->redirect('/index/user?r=' . request()->url());
         $orderApi = new OrderApi();
-        $orderApi->getOrdersData(1);
+        $orders = $orderApi->getOrders(1);
+        var_export($orders);
+        $this->assign('orders', $orders);
         return $this->fetch('index/orders/index');
     }
 }   

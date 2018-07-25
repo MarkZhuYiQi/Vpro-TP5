@@ -150,6 +150,7 @@ return [
             '__IMG__'  =>  '/static/imgs/',
             '__JS__'  =>  '/static/js/',
         ],
+        'taglib_pre_load'   =>  'app\index\tags\Pagination'
     ],
 
     // 视图输出字符串内容替换

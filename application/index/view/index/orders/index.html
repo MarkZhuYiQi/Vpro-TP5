@@ -1,6 +1,7 @@
 <extend name="index/index/base" />
 <block name="customer">
     <link rel="stylesheet" href="__CSS__/prettify.css">
+    <!--<link type="text/css" rel="stylesheet" href="__CSS__/simplePagination.css"/>-->
     <style>
         .orders_white_container{
             background:#fff;
@@ -61,12 +62,99 @@
         .tab-content .panel-heading{
             background-image: none;
             color: #999;
-
         }
+        #pagination {
+            text-align: center;
+        }
+        /*pagination*/
+        #pagination ul{
+            list-style: none;
+            font-size: 14px;
+        }
+        #pagination ul li{
+            display: inline-block;
+            margin: 0 5px;
+            background: #FFFFFF;
+        }
+        #pagination ul li a, #pagination ul li span{
+            display: block;
+            text-decoration: none;
+            padding: 5px 10px;
+        }
+        #pagination ul li a{
+            color: #666666;
+        }
+        #pagination ul li a:hover{
+            text-decoration: none;
+            background-color: #FF4949;
+            color: #FFFFFF;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        #pagination ul li.active{
+            background-color: #ff4949;
+            color: #FFFFFF;
+        }
+        #pagination ul li.disabled{
+            color: #ccc;
+        }
+        /*pagination*/
+
+        .spinner {
+            margin: 100px auto;
+            width: 50px;
+            height: 40px;
+            text-align: center;
+            font-size: 10px;
+            opacity: 0.6;
+        }
+
+        .spinner > div {
+            background-color: #333;
+            height: 100%;
+            width: 6px;
+            display: inline-block;
+
+            -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+            animation: sk-stretchdelay 1.2s infinite ease-in-out;
+        }
+
+        .spinner .rect2 {
+            -webkit-animation-delay: -1.1s;
+            animation-delay: -1.1s;
+        }
+
+        .spinner .rect3 {
+            -webkit-animation-delay: -1.0s;
+            animation-delay: -1.0s;
+        }
+
+        .spinner .rect4 {
+            -webkit-animation-delay: -0.9s;
+            animation-delay: -0.9s;
+        }
+
+        .spinner .rect5 {
+            -webkit-animation-delay: -0.8s;
+            animation-delay: -0.8s;
+        }
+
+        @-webkit-keyframes sk-stretchdelay {
+            0%, 40%, 100% { -webkit-transform: scaleY(0.4) }
+            20% { -webkit-transform: scaleY(1.0) }
+        }
+
+        @keyframes sk-stretchdelay {
+            0%, 40%, 100% {
+                transform: scaleY(0.4);
+                -webkit-transform: scaleY(0.4);
+            }  20% {
+                   transform: scaleY(1.0);
+                   -webkit-transform: scaleY(1.0);
+               }
+        }
+
     </style>
     <div class="orders_container">
-        <taglib name="app\index\tags\Pagination" />
-        <Pagination:page></Pagination:page>
         <div class="orders_white_container shadow">
             <span>我的订单</span>
         </div>
@@ -74,15 +162,15 @@
             <div class="navbar">
                 <div class="navbar-inner">
                     <ul>
-                        <li><a href="#tab1" data-toggle="tab">全部订单</a></li>
-                        <li><a href="#tab2" data-toggle="tab">待支付</a></li>
-                        <li><a href="#tab3" data-toggle="tab">交易成功</a></li>
-                        <li><a href="#tab4" data-toggle="tab">交易关闭</a></li>
+                        <li><a href="#orders" data-toggle="tab">全部订单</a></li>
+                        <li><a href="#unpayed" data-toggle="tab">待支付</a></li>
+                        <li><a href="#success" data-toggle="tab">交易成功</a></li>
+                        <li><a href="#closed" data-toggle="tab">交易关闭</a></li>
                     </ul>
                 </div>
             </div>
             <div class="tab-content">
-                <div class="tab-pane fade in" id="tab1">
+                <div class="tab-pane fade in" id="orders">
                     <foreach name="orders" item="order">
                         <div class="panel panel-default">
                             <div class="panel-heading">
@@ -122,8 +210,10 @@
                             </div>
                         </div>
                     </foreach>
+                    <div id="pagination"></div>
                 </div>
-                <div class="tab-pane fade in" id="tab2">
+                <div class="tab-pane fade in" id="unpayed">
+
                     <div>
                         <h3>目录</h3>
                         <div class="chapterList">
@@ -131,7 +221,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane" id="tab3">
+                <div class="tab-pane fade in" id="success">
                     <div class="blank-card">
                         <span>讨论区即将开放</span>
                     </div>
@@ -142,13 +232,123 @@
 
     <script src="__JS__/jquery.bootstrap.wizard.js"></script>
     <script src="__JS__/prettify.js"></script>
+    <script type="text/javascript" src="__JS__/jquery.simplePagination.js"></script>
     <script>
 
         const order = `
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <div class="row order-title">
+                <div class="col-md-4">订单编号: %order_id%</div>
+                <div class="col-md-4">创建时间：%order_time%</div>
+                <div class="col-md-4"></div>
+            </div>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <div class="orders-lab">
+            <div class="row">
+                <div class="col-md-9">
+                    %orderSub%
+                </div>
+                <div class="col-md-3">
 
+                    <div class="row orders-history-lab">
+                        <span class="col-md-6 order-price">%order_payment_price%</span>
+                        <div class="col-md-6">等待支付</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
         `
+        const orderSub = `
+<div class="orders-history-lab">
+    <div class="row order-item">
+        <div class="col-md-3">
+            <img class="orders-history-img" src="%course_cover_address%" alt="" />
+        </div>
+        <div class="col-md-5"><span>%course_title%</span></div>
+        <div class="col-md-2">%course_author%</div>
+        <div class="col-md-2">%course_price%</div>
+    </div>
+</div>
+        `
+        const loading = `
+<div class="spinner">
+    <div class="rect1"></div>
+    <div class="rect2"></div>
+    <div class="rect3"></div>
+    <div class="rect4"></div>
+    <div class="rect5"></div>
+</div>
+        `
+      function getOrders(type) {
+        $.ajax({
+          type: 'GET',
+          url: '/getorders/' + type,
+          dataType: 'json',
+          contentType: 'application/json',
+          success: function(data) {
+            console.log(data)
+            genOrders(data)
+          }
+        })
+      }
+
+      function genOrders(data) {
+        res = ''
+        for(let id in data) {
+          let tpl = order
+          for(let key in data[id]) {
+            let item = data[id]
+            let pattern = eval('/%' + key + '%/')
+            console.log(item['order_id'])
+            tpl = tpl.replace(pattern, item[key])
+          }
+          tpl = tpl.replace('/%orderSub%/', genSubOrders(data[id]['order_sub']))
+          res += tpl
+        }
+        console.log(res)
+      }
+      function genSubOrders(data)
+      {
+        let res = ''
+        for(let item of data)
+        {
+          let tpl = orderSub
+          for(let key in item)
+          {
+            let pattern = eval('/%' + key + '%/')
+            tpl = tpl.replace(pattern, item[key])
+          }
+          res += tpl
+        }
+        return res
+      }
+
       $(document).ready(function() {
         $('#rootwizard').bootstrapWizard({'tabClass': 'nav nav-tabs'});
+        $('#pagination').pagination({
+          items: 100,
+          itemsOnPage: 10,
+          cssStyle: 'light-theme',
+          hrefTextPrefix: '#',
+          hrefTextSuffix: '',
+          prevText: '<',
+          nextText: '>',
+
+        });
+        $('a[href="#orders"]').on('show.bs.tab', function(e) {
+          $('#orders').empty()
+          $('#orders').append(loading)
+        })
+
+
+        $('.tab-pane').append(loading)
+        getOrders(1)
       })
     </script>
 </block>

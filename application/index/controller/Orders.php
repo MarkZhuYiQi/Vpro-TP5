@@ -9,6 +9,7 @@ namespace app\index\controller;
 
 use app\api\OrderApi;
 use app\common\controller\Base;
+use think\Request;
 
 class Orders extends Base
 {
@@ -17,8 +18,14 @@ class Orders extends Base
         if(!session('id')) $this->redirect('/index/user?r=' . request()->url());
         $orderApi = new OrderApi();
         $orders = $orderApi->getOrders(1);
-        var_export($orders);
         $this->assign('orders', $orders);
         return $this->fetch('index/orders/index');
     }
-}   
+    function getOrders()
+    {
+        $params = Request::instance()->route();
+        $orderApi = new OrderApi();
+        $orders = $orderApi->getOrders(1);
+        echo json_encode($orders);
+    }
+}

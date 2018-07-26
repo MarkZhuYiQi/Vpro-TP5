@@ -35,6 +35,9 @@
             max-height:none;
             margin: 0 0 12px 0;
         }
+        .order-item{
+            margin-bottom: 15px;
+        }
         .orders-history-img{
             width:120px;
             height:68px;
@@ -62,6 +65,8 @@
         }
     </style>
     <div class="orders_container">
+        <taglib name="app\index\tags\Pagination" />
+        <Pagination:page></Pagination:page>
         <div class="orders_white_container shadow">
             <span>我的订单</span>
         </div>
@@ -78,103 +83,45 @@
             </div>
             <div class="tab-content">
                 <div class="tab-pane fade in" id="tab1">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">
-                                <div class="row order-title">
-                                    <div class="col-md-4">订单编号: 6419520190429532160</div>
-                                    <div class="col-md-4">创建时间：2018-07-21 16:16:16</div>
-                                    <div class="col-md-4"></div>
-                                </div>
-                            </h3>
-                        </div>
-                        <div class="panel-body">
-                            <div class="orders-lab">
-                                <div class="row">
-                                    <div class="col-md-9">
-                                        <div class="orders-history-lab">
-                                            <div class="col-md-3">
-                                                <img class="orders-history-img" :src="v.course_cover_address" alt="" />
-                                            </div>
-                                            <div class="col-md-5"><span @click="jumpTo(v.course_id)">111111111111111111111111111111111111111</span></div>
-                                            <div class="col-md-2">教育教育教育</div>
-                                            <div class="col-md-2">168.00</div>
-                                        </div>
+                    <foreach name="orders" item="order">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">
+                                    <div class="row order-title">
+                                        <div class="col-md-4">订单编号: {$order['order_id']}</div>
+                                        <div class="col-md-4">创建时间：2018-07-21 16:16:16</div>
+                                        <div class="col-md-4"></div>
                                     </div>
-                                    <div class="col-md-3">
-                                        <div class="row orders-history-lab">
-                                            <div class="col-md-6">
-                                                <!--<span class="origin-price">168.00</span>-->
-                                                <span class="order-price">168.00</span>
+                                </h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="orders-lab">
+                                    <div class="row">
+                                        <div class="col-md-9">
+                                            <foreach name="$order['order_sub']" item="item">
+                                                <div class="orders-history-lab">
+                                                    <div class="row order-item">
+                                                        <div class="col-md-3">
+                                                            <img class="orders-history-img" src="{$item['course_cover_address']}" alt="" />
+                                                        </div>
+                                                        <div class="col-md-5"><span @click="jumpTo(v.course_id)">{$item['course_title']}</span></div>
+                                                        <div class="col-md-2">教育教育教育</div>
+                                                        <div class="col-md-2">{$item['course_price']}</div>
+                                                    </div>
+                                                </div>
+                                            </foreach>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="row orders-history-lab">
+                                                <span class="col-md-6 order-price">{$order['order_payment_price']}</span>
+                                                <div class="col-md-6" v-if="items.order_payment==0">等待支付</div>
                                             </div>
-                                            <div class="col-md-6" v-if="items.order_payment==0">等待支付</div>
-                                            <!--<div class="col-md-4" v-if="items.order_payment==1">交易成功</div>-->
-                                            <!--<div class="col-md-4" v-if="items.order_payment==2">交易失败</div>-->
-                                            <!--<div class="col-md-4" v-if="items.order_payment==0"><el-button @click="pay(i)">立即支付</el-button></div>-->
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">
-                                <div class="row order-title">
-                                    <div class="col-md-4">订单编号: 6419520190429532160</div>
-                                    <div class="col-md-4">创建时间：2018-07-21 16:16:16</div>
-                                    <div class="col-md-4"></div>
-                                </div>
-                            </h3>
-                        </div>
-                        <div class="panel-body">
-                            <div class="orders-lab">
-                                <div class="row">
-                                    <div class="col-md-9">
-                                        <div class="orders-history-lab">
-                                            <div class="row">
-                                                <div class="col-md-3">
-                                                    <img class="orders-history-img" :src="v.course_cover_address" alt="" />
-                                                </div>
-                                                <div class="col-md-5"><span @click="jumpTo(v.course_id)">111111111111111111111111111111111111111</span></div>
-                                                <div class="col-md-2">教育教育教育</div>
-                                                <div class="col-md-2">168.00</div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-3">
-                                                    <img class="orders-history-img" :src="v.course_cover_address" alt="" />
-                                                </div>
-                                                <div class="col-md-5"><span @click="jumpTo(v.course_id)">111111111111111111111111111111111111111</span></div>
-                                                <div class="col-md-2">教育教育教育</div>
-                                                <div class="col-md-2">168.00</div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-3">
-                                                    <img class="orders-history-img" :src="v.course_cover_address" alt="" />
-                                                </div>
-                                                <div class="col-md-5"><span @click="jumpTo(v.course_id)">111111111111111111111111111111111111111</span></div>
-                                                <div class="col-md-2">教育教育教育</div>
-                                                <div class="col-md-2">168.00</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="row orders-history-lab">
-                                            <div class="col-md-6">
-                                                <!--<span class="origin-price">168.00</span>-->
-                                                <span class="order-price">168.00</span>
-                                            </div>
-                                            <!--<div class="col-md-6" v-if="items.order_payment==0">等待支付</div>-->
-                                            <!--<div class="col-md-4" v-if="items.order_payment==1">交易成功</div>-->
-                                            <!--<div class="col-md-4" v-if="items.order_payment==2">交易失败</div>-->
-                                            <div class="col-md-4" v-if="items.order_payment==0"><button @click="pay(i)" class="btn btn-md btn-ff">立即支付</button></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </foreach>
                 </div>
                 <div class="tab-pane fade in" id="tab2">
                     <div>
@@ -196,6 +143,10 @@
     <script src="__JS__/jquery.bootstrap.wizard.js"></script>
     <script src="__JS__/prettify.js"></script>
     <script>
+
+        const order = `
+
+        `
       $(document).ready(function() {
         $('#rootwizard').bootstrapWizard({'tabClass': 'nav nav-tabs'});
       })

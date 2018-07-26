@@ -21,6 +21,7 @@ return [
     // api相关
 
     // 优惠券信息
+
     // 没有可用优惠券
     'COUPON_NONE'                               =>          30080,
     // 没有找到这张优惠券
@@ -40,6 +41,7 @@ return [
     'COURSE_NOT_EXISTED'                        =>          35003,
     'ORDER_OBJ_VALIDATE_ERROR'                  =>          35004,
     'ORDER_PUT_DATABASE_ERROR'                  =>          35005,
+    'ORDER_EXPIRED_TIME'                        =>          1800,
 
     // pay相关
 

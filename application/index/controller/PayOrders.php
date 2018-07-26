@@ -7,6 +7,7 @@
  */
 namespace app\index\controller;
 
+use app\api\OrderApi;
 use app\common\controller\Base;
 use app\common\model\VproOrder;
 use app\common\model\VproOrderSub;
@@ -57,6 +58,9 @@ class PayOrders extends Base{
                 $orderMain->order_payment_id = $data['trade_no'];
                 $orderMain->order_payment_price = $data['total_amount'];
                 $orderMain->save();
+                $orderApi = new OrderApi();
+                $orderApi->delRecordOrderTime($data['out_trade_no']);
+                return $pay->success()->send();
             } else {
                 throw new \Exception('pay failed', 404);
             }
@@ -74,7 +78,6 @@ class PayOrders extends Base{
             return false;
 //            file_put_contents('./alipay_notify', var_export($data, true), FILE_APPEND);
         }
-        return $pay->success()->send();
     }
 
     /**

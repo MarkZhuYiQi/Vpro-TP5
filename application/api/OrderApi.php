@@ -8,8 +8,10 @@
 namespace app\api;
 
 use think\Db;
+use think\Request;
 
 class OrderApi extends BaseApi {
+    private $orderPrefix = 'orders';
     public function getOrderCourseIds($orderId) {
         $courseIds = json_decode($this->redis->get($orderId));
         // 订单已经超时了，商品id已经过期
@@ -96,5 +98,87 @@ class OrderApi extends BaseApi {
             Db::rollback();
             return false;
         }
+    }
+    public function recordOrderTime($orderId)
+    {
+        $this->redis->setex($this->orderPlaceTimePrefix . $orderId, config('key.ORDER_EXPIRED_TIME'), time());
+    }
+    public function delRecordOrderTime($orderId)
+    {
+        $this->redis->del($this->orderPlaceTimePrefix . $orderId);
+    }
+
+    public function getOrders(int $type)
+    {
+        // 0 待付款 1 支付成功 2 交易关闭
+        $type = intval(Request::instance()->route('type', '1'));
+        $orders = $this->getOrdersData($type);
+        if (!count($orders)) return [];
+        foreach($orders as $key => $item)
+        {
+            $orders[$key]['order_sub'] = $this->getOrderDetail($item['order_sub']);
+        }
+        return $orders;
+
+    }
+    public function getOrdersData($type)
+    {
+        if (!$this->redis->exists($this->orderPrefix . session('id'))) {
+            $res = [];
+            $vproOrder = Db::table('vpro_order')
+                ->alias('vo')
+                ->join('vpro_order_sub vos', 'vos.order_id = vo.order_id', 'left')
+                ->where('vo.user_id', session('id'))
+                ->select();
+            if (count($vproOrder)) {
+                foreach ($vproOrder as $item) {
+                    if (!array_key_exists($item['order_id'], $res)) {
+                        $res[$item['order_id']] = [
+                            'order_id' => $item['order_id'],
+                            'order_price' => $item['order_price'],
+                            'order_time' => $item['order_time'],
+                            'user_id' => $item['user_id'],
+                            'order_coupon_used' => $item['order_coupon_used'],
+                            'order_discount' => $item['order_discount'],
+                            'order_payment' => $item['order_payment'],
+                            'order_payment_id' => $item['order_payment_id'],
+                            'order_payment_price' => $item['order_payment_price'],
+                            'order_sub' => ''
+                        ];
+                    }
+                    $res[$item['order_id']]['order_sub'] .= $res[$item['order_id']]['order_sub'] === '' ? $item['course_id'] : ',' . $item['course_id'];
+                }
+            }
+            $this->redis->hMset($this->orderPrefix . session('id'), array_map(function($item) {
+                return json_encode($item);
+            }, $res));
+        }
+
+        $orders = array_map(function($item) {
+            return json_decode($item, true);
+        }, $this->redis->hGetAll($this->orderPrefix . session('id')));
+        if (!$orders) return [];
+        return array_filter($orders, function($item) use ($orders, $type) {
+            return $item['order_payment'] === (int)$type;
+        });
+    }
+    function getOrderDetail($orderSub)
+    {
+        $courseApi = new CourseApi();
+        $res = [];
+        $sub = explode(',', $orderSub);
+        foreach($sub as $item)
+        {
+            $course = $courseApi->getCourseInfo($item, 'course');
+            $cover = $courseApi->getCourseInfo($item, 'cover');
+            $res[] = [
+                'course_id'             =>      $course['course_id'],
+                'course_price'          =>      $course['course_price'],
+                'course_title'          =>      $course['course_title'],
+                'course_author'         =>      $course['course_author'],
+                'course_cover_address'  =>      $cover['course_cover_address']
+            ];
+        }
+        return $res;
     }
 }

@@ -134,7 +134,7 @@ class OrderApi extends BaseApi {
                 foreach ($vproOrder as $item) {
                     if (!array_key_exists($item['order_id'], $res)) {
                         $res[$item['order_id']] = [
-                            'order_id' => $item['order_id'],
+                            'order_id' => (string)$item['order_id'],
                             'order_price' => $item['order_price'],
                             'order_time' => $item['order_time'],
                             'user_id' => $item['user_id'],
@@ -158,6 +158,7 @@ class OrderApi extends BaseApi {
             return json_decode($item, true);
         }, $this->redis->hGetAll($this->orderPrefix . session('id')));
         if (!$orders) return [];
+        if ($type === 3) return $orders;
         return array_filter($orders, function($item) use ($orders, $type) {
             return $item['order_payment'] === (int)$type;
         });

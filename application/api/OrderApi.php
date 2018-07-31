@@ -7,11 +7,13 @@
  */
 namespace app\api;
 
+use app\common\model\VproOrder;
 use think\Db;
 use think\Request;
 
 class OrderApi extends BaseApi {
     private $orderPrefix = 'orders';
+    private $payRange = ['0', '1', '2', '0,1,2'];
     public function getOrderCourseIds($orderId) {
         $courseIds = json_decode($this->redis->get($orderId));
         // 订单已经超时了，商品id已经过期
@@ -121,12 +123,6 @@ class OrderApi extends BaseApi {
     }
     public function getOrdersData(int $type, int $page)
     {
-        $payRange = [
-            '0',
-            '1',
-            '2',
-            '0,1,2'
-        ];
         $offsetCount = config('key.ORDERS_PAGINATION_COUNT') * ($page - 1);
         $ordersKey = $this->orderPrefix . session('id') . 't' . $type . 'p' . $page;
 //        if (!$this->redis->exists($ordersKey) {
@@ -134,34 +130,47 @@ class OrderApi extends BaseApi {
             // 分页
             $ordersSql = <<<o
 SELECT
-	*
+	vo.*,
+	GROUP_CONCAT(vos.course_id) as course_ids
 FROM
 	vpro_order vo
 LEFT JOIN vpro_order_sub vos ON vo.order_id = vos.order_id
 WHERE
-	vo.order_id <= (
+	vo.order_id IN (
 		SELECT
-			order_id
+			t.order_id
 		FROM
-			vpro_order 
-		ORDER BY 
-			order_id DESC
-		LIMIT 1
-		OFFSET :ordersoffset
-	)
-	AND 
-	  order_payment IN :type
-ORDER BY
-	vo.order_id DESC
-LIMIT :orderscount;
+			(
+				SELECT
+					order_id, order_payment
+				FROM
+					vpro_order
+				WHERE
+					order_id <= (
+						SELECT
+							order_id
+						FROM
+							vpro_order
+						ORDER BY
+							order_id DESC
+						LIMIT 1 OFFSET :ordersoffset
+					)
+				ORDER BY
+					order_id DESC
+				LIMIT :orderscount
+			) AS t
+		WHERE
+			t.order_payment in :type
+	) group by vo.order_id
+		ORDER BY
+		vo.order_id desc
+	;
 o;
-            foreach([':ordersoffset' => $offsetCount, ':type' => "($payRange[$type])", ':orderscount' => config('key.ORDERS_PAGINATION_COUNT')] as $key => $value)
+            foreach([':ordersoffset' => $offsetCount, ':type' => "($this->payRange[$type])", ':orderscount' => config('key.ORDERS_PAGINATION_COUNT')] as $key => $value)
             {
                 $ordersSql = str_replace($key, $value, $ordersSql);
             }
             $vproOrder = Db::query($ordersSql);
-            var_export($vproOrder);
-            exit();
             if (count($vproOrder)) {
                 // 取出数据，存入redis
                 foreach ($vproOrder as $item) {
@@ -177,11 +186,9 @@ o;
                             'order_title' => $item['order_title'],
                             'order_payment_id' => $item['order_payment_id'],
                             'order_payment_price' => $item['order_payment_price'],
-                            'order_sub' => ''
+                            'order_sub' => $item['course_ids']
                         ];
                     }
-                    // 构建子订单的课程id
-                    $res[$item['order_id']]['order_sub'] .= $res[$item['order_id']]['order_sub'] === '' ? $item['course_id'] : ',' . $item['course_id'];
                 }
             }
             $this->redis->hMset($ordersKey, array_map(function($item) {
@@ -219,5 +226,15 @@ o;
             ];
         }
         return $res;
+    }
+
+    /**
+     * @param int $type
+     * @return int|string
+     */
+    function getOrdersCount(int $type)
+    {
+        $vproOrder = new VproOrder();
+        return $vproOrder->where('order_payment', 'in', "($this->payRange[$type])")->count('order_id');
     }
 }

@@ -108,29 +108,62 @@ class OrderApi extends BaseApi {
         $this->redis->del($this->orderPlaceTimePrefix . $orderId);
     }
 
-    public function getOrders(int $type)
+    public function getOrders(int $type, int $page=1)
     {
-        // 0 待付款 1 支付成功 2 交易关闭
-        $type = intval(Request::instance()->route('type', '1'));
-        $orders = $this->getOrdersData($type);
+        // 0 待付款 1 支付成功 2 交易关闭 3 所有订单
+        $orders = $this->getOrdersData($type, $page);
         if (!count($orders)) return [];
         foreach($orders as $key => $item)
         {
             $orders[$key]['order_sub'] = $this->getOrderDetail($item['order_sub']);
         }
         return $orders;
-
     }
-    public function getOrdersData($type)
+    public function getOrdersData(int $type, int $page)
     {
-        if (!$this->redis->exists($this->orderPrefix . session('id'))) {
+        $payRange = [
+            '0',
+            '1',
+            '2',
+            '0,1,2'
+        ];
+        $offsetCount = config('key.ORDERS_PAGINATION_COUNT') * ($page - 1);
+        $ordersKey = $this->orderPrefix . session('id') . 't' . $type . 'p' . $page;
+//        if (!$this->redis->exists($ordersKey) {
             $res = [];
-            $vproOrder = Db::table('vpro_order')
-                ->alias('vo')
-                ->join('vpro_order_sub vos', 'vos.order_id = vo.order_id', 'left')
-                ->where('vo.user_id', session('id'))
-                ->select();
+            // 分页
+            $ordersSql = <<<o
+SELECT
+	*
+FROM
+	vpro_order vo
+LEFT JOIN vpro_order_sub vos ON vo.order_id = vos.order_id
+WHERE
+	vo.order_id <= (
+		SELECT
+			order_id
+		FROM
+			vpro_order 
+		ORDER BY 
+			order_id DESC
+		LIMIT 1
+		OFFSET :ordersoffset
+	)
+	AND 
+	  order_payment IN :type
+ORDER BY
+	vo.order_id DESC
+LIMIT :orderscount;
+o;
+            foreach([':ordersoffset' => $offsetCount, ':type' => "($payRange[$type])", ':orderscount' => config('key.ORDERS_PAGINATION_COUNT')] as $key => $value)
+            {
+                $ordersSql = str_replace($key, $value, $ordersSql);
+            }
+            $vproOrder = Db::query($ordersSql);
+            var_export($vproOrder);
+            exit();
             if (count($vproOrder)) {
+                // 取出数据，存入redis
                 foreach ($vproOrder as $item) {
                     if (!array_key_exists($item['order_id'], $res)) {
                         $res[$item['order_id']] = [
@@ -141,22 +174,26 @@ class OrderApi extends BaseApi {
                             'order_coupon_used' => $item['order_coupon_used'],
                             'order_discount' => $item['order_discount'],
                             'order_payment' => $item['order_payment'],
+                            'order_title' => $item['order_title'],
                             'order_payment_id' => $item['order_payment_id'],
                             'order_payment_price' => $item['order_payment_price'],
                             'order_sub' => ''
                         ];
                     }
+                    // 构建子订单的课程id
                     $res[$item['order_id']]['order_sub'] .= $res[$item['order_id']]['order_sub'] === '' ? $item['course_id'] : ',' . $item['course_id'];
                 }
             }
-            $this->redis->hMset($this->orderPrefix . session('id'), array_map(function($item) {
+            $this->redis->hMset($ordersKey, array_map(function($item) {
                 return json_encode($item);
             }, $res));
-        }
+            // 分页的orders过期时间
+            $this->redis->expire($ordersKey, rand(60, 120) * 60);
+//        }
 
         $orders = array_map(function($item) {
             return json_decode($item, true);
-        }, $this->redis->hGetAll($this->orderPrefix . session('id')));
+        }, $this->redis->hGetAll($ordersKey));
         if (!$orders) return [];
         if ($type === 3) return $orders;
         return array_filter($orders, function($item) use ($orders, $type) {
@@ -172,11 +209,12 @@ class OrderApi extends BaseApi {
         {
             $course = $courseApi->getCourseInfo($item, 'course');
             $cover = $courseApi->getCourseInfo($item, 'cover');
+            $auth = $courseApi->getCourseInfo($course['course_author'], 'auth');
             $res[] = [
                 'course_id'             =>      $course['course_id'],
                 'course_price'          =>      $course['course_price'],
                 'course_title'          =>      $course['course_title'],
-                'course_author'         =>      $course['course_author'],
+                'course_author'         =>      $auth['auth_appid'],
                 'course_cover_address'  =>      $cover['course_cover_address']
             ];
         }

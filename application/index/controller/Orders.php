@@ -23,9 +23,12 @@ class Orders extends Base
     }
     function getOrders()
     {
+        // 0 待付款 1 支付成功 2 交易关闭 3 所有订单
         $params = Request::instance()->route();
+        $type = $params['type'];
+        $page = $params['page'] ?? 1;
         $orderApi = new OrderApi();
-        $orders = $orderApi->getOrders($params['type']);
+        $orders = $orderApi->getOrders($type, $page);
         sleep(0.5);
         echo json_encode($orders);
     }

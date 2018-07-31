@@ -39,6 +39,10 @@
         .order-item{
             margin-bottom: 15px;
         }
+        .order-item .author{
+            font-size: 13px;
+            color: #666;
+        }
         .orders-history-img{
             width:120px;
             height:68px;
@@ -253,7 +257,6 @@
                     %orderSub%
                 </div>
                 <div class="col-md-3">
-
                     <div class="row orders-history-lab">
                         <span class="col-md-6 order-price">%order_payment_price%</span>
                         <div class="col-md-6">等待支付</div>
@@ -271,7 +274,7 @@
             <img class="orders-history-img" src="%course_cover_address%" alt="" />
         </div>
         <div class="col-md-5"><span>%course_title%</span></div>
-        <div class="col-md-2">%course_author%</div>
+        <div class="col-md-2 author">%course_author%</div>
         <div class="col-md-2">%course_price%</div>
     </div>
 </div>

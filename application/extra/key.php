@@ -48,4 +48,6 @@ return [
     // 购物车相关
     'CART_COURSE_INFO_ERROR'                    =>          36001,
 
+    // 订单分页：
+    'ORDERS_PAGINATION_COUNT'                   =>          10,
 ];

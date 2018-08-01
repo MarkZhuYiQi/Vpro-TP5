@@ -166,7 +166,7 @@ WHERE
 		vo.order_id desc
 	;
 o;
-            foreach([':ordersoffset' => $offsetCount, ':type' => "($this->payRange[$type])", ':orderscount' => config('key.ORDERS_PAGINATION_COUNT')] as $key => $value)
+            foreach([':ordersoffset' => $offsetCount, ':type' => '(' . $this->payRange[$type] . ')', ':orderscount' => config('key.ORDERS_PAGINATION_COUNT')] as $key => $value)
             {
                 $ordersSql = str_replace($key, $value, $ordersSql);
             }
@@ -235,6 +235,6 @@ o;
     function getOrdersCount(int $type)
     {
         $vproOrder = new VproOrder();
-        return $vproOrder->where('order_payment', 'in', "($this->payRange[$type])")->count('order_id');
+        return $vproOrder->where('order_payment', 'in', '(' . $this->payRange[$type] . ')')->count('order_id');
     }
 }

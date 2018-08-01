@@ -18,7 +18,6 @@ class Orders extends Base
         if(!session('id')) $this->redirect('/index/user?r=' . request()->url());
         $orderApi = new OrderApi();
         $orders = $orderApi->getOrders(1);
-        var_export($orderApi->getOrdersCount(1));
         $this->assign('orders', $orders);
         return $this->fetch('index/orders/index');
     }
@@ -30,7 +29,18 @@ class Orders extends Base
         $page = $params['page'] ?? 1;
         $orderApi = new OrderApi();
         $orders = $orderApi->getOrders($type, $page);
-        sleep(0.5);
         echo json_encode($orders);
+    }
+    function getOrderPageInfo()
+    {
+        $params = Request::instance()->route();
+        $type = $params['type'];
+        if (!in_array($type, ['0', '1', '2', '3'])) {
+            echo 0;
+            exit();
+        }
+        $orderApi = new OrderApi();
+        $ordersCount = $orderApi->getOrdersCount($type);
+        echo $ordersCount;
     }
 }

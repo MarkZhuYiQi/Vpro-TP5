@@ -67,39 +67,36 @@
             background-image: none;
             color: #999;
         }
-        #pagination {
+        .pagination {
             text-align: center;
         }
         /*pagination*/
-        #pagination ul{
-            list-style: none;
-            font-size: 14px;
-        }
-        #pagination ul li{
+        .pagination > li{
             display: inline-block;
             margin: 0 5px;
             background: #FFFFFF;
         }
-        #pagination ul li a, #pagination ul li span{
+        .pagination > li a, .pagination > li > span{
             display: block;
             text-decoration: none;
             padding: 5px 10px;
+            border: none !important;
         }
-        #pagination ul li a{
+        .pagination > li > a{
             color: #666666;
         }
-        #pagination ul li a:hover{
+        .pagination > li > a:hover{
             text-decoration: none;
             background-color: #FF4949;
             color: #FFFFFF;
             transition: background-color 0.2s, color 0.2s;
         }
-        #pagination ul li.active{
+        .pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus{
             background-color: #ff4949;
             color: #FFFFFF;
         }
-        #pagination ul li.disabled{
-            color: #ccc;
+        .pagination > li.disabled > a{
+            color: #ccc !important;
         }
         /*pagination*/
 
@@ -169,74 +166,31 @@
                         <li><a href="#orders" data-toggle="tab">全部订单</a></li>
                         <li><a href="#unpayed" data-toggle="tab">待支付</a></li>
                         <li><a href="#success" data-toggle="tab">交易成功</a></li>
-                        <li><a href="#closed" data-toggle="tab">交易关闭</a></li>
+                        <li><a href="#expired" data-toggle="tab">交易关闭</a></li>
                     </ul>
                 </div>
             </div>
             <div class="tab-content">
                 <div class="tab-pane fade in" id="orders">
-                    <foreach name="orders" item="order">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    <div class="row order-title">
-                                        <div class="col-md-4">订单编号: {$order['order_id']}</div>
-                                        <div class="col-md-4">创建时间：2018-07-21 16:16:16</div>
-                                        <div class="col-md-4"></div>
-                                    </div>
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                                <div class="orders-lab">
-                                    <div class="row">
-                                        <div class="col-md-9">
-                                            <foreach name="$order['order_sub']" item="item">
-                                                <div class="orders-history-lab">
-                                                    <div class="row order-item">
-                                                        <div class="col-md-3">
-                                                            <img class="orders-history-img" src="{$item['course_cover_address']}" alt="" />
-                                                        </div>
-                                                        <div class="col-md-5"><span @click="jumpTo(v.course_id)">{$item['course_title']}</span></div>
-                                                        <div class="col-md-2">教育教育教育</div>
-                                                        <div class="col-md-2">{$item['course_price']}</div>
-                                                    </div>
-                                                </div>
-                                            </foreach>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="row orders-history-lab">
-                                                <span class="col-md-6 order-price">{$order['order_payment_price']}</span>
-                                                <div class="col-md-6" v-if="items.order_payment==0">等待支付</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </foreach>
-                    <div id="pagination"></div>
+                    <div></div>
                 </div>
                 <div class="tab-pane fade in" id="unpayed">
-
-                    <div>
-                        <h3>目录</h3>
-                        <div class="chapterList">
-
-                        </div>
-                    </div>
+                    <div></div>
                 </div>
                 <div class="tab-pane fade in" id="success">
-                    <div class="blank-card">
-                        <span>讨论区即将开放</span>
-                    </div>
+                    <div></div>
+                </div>
+                <div class="tab-pane fade in" id="expired">
+                    <div></div>
                 </div>
             </div>
+            <!--<ul class="pagination"></ul>-->
         </div>
     </div>
 
     <script src="__JS__/jquery.bootstrap.wizard.js"></script>
     <script src="__JS__/prettify.js"></script>
-    <script type="text/javascript" src="__JS__/jquery.simplePagination.js"></script>
+    <script type="text/javascript" src="__JS__/jquery.twbsPagination.js"></script>
     <script>
 
         const order = `
@@ -267,6 +221,9 @@
     </div>
 </div>
         `
+        const pagination = `
+<ul class="pagination"></ul>
+        `
         const orderSub = `
 <div class="orders-history-lab">
     <div class="row order-item">
@@ -288,20 +245,60 @@
     <div class="rect5"></div>
 </div>
         `
-      function getOrders(type, id) {
+      const pageSize = 10;
+      function count(o){
+        let t = typeof o;
+        if(t === 'string'){
+          return o.length;
+        }else if(t === 'object'){
+          let n = 0;
+          for(let i in o){
+            n++;
+          }
+          return n;
+        }
+        return false;
+      }
+
+      function getOrders(type, id, page=1) {
         $('#' + id).empty().append(loading)
         $.ajax({
           type: 'GET',
-          url: '/getorders/' + type,
+          url: '/getorders/' + type + '/' + page,
           dataType: 'json',
           contentType: 'application/json',
           success: function(data) {
             let ordersTpl = genOrders(data)
-            $('#' + id).empty().append($(ordersTpl))
+            $('#' + id + ' > div').empty().append($(ordersTpl))
           }
         })
       }
-
+      function getPageInfo(type, id) {
+        $.ajax({
+          type: 'GET',
+          url: '/orderpage/' + type,
+          dataType: 'json',
+          contentType: 'application/json',
+          success: function(data) {
+            $('#' + id).append($(pagination))
+            genPagination(data, 10, type, id)
+          }
+        })
+      }
+      function genPagination(ordersCount, pageSize=10, type, id) {
+        $('.pagination').twbsPagination({
+          totalPages: Math.ceil(ordersCount / pageSize),
+          visiblePages: 5,
+          prev: '<',
+          next: '>',
+          first: '首页',
+          last: "末页",
+          startPage: 1,
+          onPageClick: function (event, page) {}
+        }).on('page', function (event, page) {
+          getOrders(type, id, page)
+        });
+      }
       function genOrders(data) {
         res = ''
         for(let id in data) {
@@ -334,35 +331,46 @@
 
       $(document).ready(function() {
         $('#rootwizard').bootstrapWizard({'tabClass': 'nav nav-tabs'});
-        $('#pagination').pagination({
-          items: 100,
-          itemsOnPage: 10,
-          cssStyle: 'light-theme',
-          hrefTextPrefix: '#',
-          hrefTextSuffix: '',
-          prevText: '<',
-          nextText: '>',
-
-        });
         let type = 3
+        let id = 'orders'
         let label = false
-        $('a[href="#orders"]').on('show.bs.tab', function(e) {
-          type = 3
-          getOrders(type, e.target.href.split('#')[1])
-        })
-        $('a[href="#unpayed"]').on('show.bs.tab', function(e) {
-          type = 0
-          getOrders(type, e.target.href.split('#')[1])
-        })
-        $('a[href="#success"]').on('show.bs.tab', function(e) {
-          type = 1
-          getOrders(type, e.target.href.split('#')[1])
-        })
-        $('a[href="#expired"]').on('show.bs.tab', function(e) {
-          type = 2
-          getOrders(type, e.target.href.split('#')[1])
-        })
+        getOrders(type, id);
+        getPageInfo(type, id)
+        tabs = ['unpayed', 'success', 'expired', 'orders']
+        for (let i in tabs)
+        {
+          $('a[href="#' + tabs[i] + '"]').on('show.bs.tab', function(e) {
+            $('#' + tabs[i]).empty()
+            getOrders(i, tabs[i])
+            getPageInfo(i, tabs[i])
+          })
+        }
 
+
+        // $('a[href="#orders"]').on('show.bs.tab', function(e) {
+        //   type = 3
+        //   id = e.target.href.split('#')[1]
+        //   getOrders(type, id)
+        //   getPageInfo(type, id)
+        // })
+        // $('a[href="#unpayed"]').on('show.bs.tab', function(e) {
+        //   type = 0
+        //   id = e.target.href.split('#')[1]
+        //   getOrders(type, id)
+        //   getPageInfo(type, id)
+        // })
+        // $('a[href="#success"]').on('show.bs.tab', function(e) {
+        //   type = 1
+        //   id = e.target.href.split('#')[1]
+        //   getOrders(type, id)
+        //   getPageInfo(type, id)
+        // })
+        // $('a[href="#expired"]').on('show.bs.tab', function(e) {
+        //   type = 2
+        //   id = e.target.href.split('#')[1]
+        //   getOrders(type, id)
+        //   getPageInfo(type, id)
+        // })
       })
     </script>
 </block>
